@@ -12,6 +12,7 @@ export default async function handler(req, res) {
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `
+    You are a senior grant reviewer and a compliance officer for charity proposals.
       Analyze the following charity proposal and give it a score from 0 to 100 
       based on these criteria:
       - Clear objectives and impact (30 points)
@@ -23,20 +24,26 @@ export default async function handler(req, res) {
       Proposal text:
       ${text}
 
-      Return only a number between 0 and 100.
-      Justify why it received that score.
+      The format of your response must be as follows:
+      Return the total score according to the criteria first, then justify why it received that score
+      without revealing the score breakdown. Do not include the step by step sum calculation at the end
+      since you already have the total score.
+      No markdown format required, but feel free to use newlines for clarity.
     `;
 
     const result = await model.generateContent(prompt);
     console.log('Gemini response:', result.response.text());
     const response = await result.response;
-    const score = parseInt(response.text().trim());
-
+    const fullText = response.text().trim();
+    
+    const [scoreText, ...explanationLines] = fullText.split('\n');
+    const score = parseInt(scoreText);
+    const explanation = explanationLines.join('\n').trim();
     if (isNaN(score) || score < 0 || score > 100) {
       throw new Error('Invalid score received from Gemini');
     }
 
-    res.status(200).json({ score });
+    res.status(200).json({ score, explanation });
   } catch (error) {
     console.error('Analysis error:', error);
     res.status(500).json({ 

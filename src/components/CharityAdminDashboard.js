@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const CharityAdminDashboard = () => {
   const [score, setScore] = useState(null);
+  const [explanation, setExplanation] = useState('');
   const [loading, setLoading] = useState(false);
 
   const onDrop = async (acceptedFiles) => {
@@ -32,8 +33,9 @@ const CharityAdminDashboard = () => {
         body: JSON.stringify({ text }),
       });
 
-      const { score } = await analyzeResponse.json();
+      const { score, explanation } = await analyzeResponse.json();
       setScore(score);
+      setExplanation(explanation);
     } catch (error) {
       console.error('Error processing proposal:', error);
     } finally {
@@ -70,7 +72,12 @@ const CharityAdminDashboard = () => {
       {score !== null && (
         <div className="mt-6 p-4 bg-gray-100 rounded-lg">
           <h2 className="font-bold mb-2">Proposal Score:</h2>
-          <div className="text-3xl font-bold text-blue-600">{score}/100</div>
+          <div className="text-3xl font-bold text-blue-600 mb-4">{score}/100</div>
+          
+          <h3 className="font-bold mb-2">Analysis:</h3>
+          <div className="whitespace-pre-line text-gray-700">
+            {explanation}
+          </div>
         </div>
       )}
     </div>
