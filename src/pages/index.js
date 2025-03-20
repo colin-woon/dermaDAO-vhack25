@@ -52,6 +52,7 @@ export default function Home() {
 			) : (
 				<DonorDashboard />
 			)}
+			{/* <DonorDashboard /> */}
 		</div>
 		// <div>
 		// 	{!isCharityAuthenticated && !isDonorAuthenticated && (
