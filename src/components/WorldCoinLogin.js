@@ -42,7 +42,7 @@ const WorldcoinLogin = () => {
 			localStorage.setItem('worldcoin_user_sub', userSub);
 			//   localStorage.setItem('worldcoin_access_token', result.token.access_token);
 
-			props.onAuthSuccess();
+			onAuthSuccess();
 
 			return result;
 		} catch (error) {
