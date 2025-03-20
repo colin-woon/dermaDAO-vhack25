@@ -70,7 +70,7 @@ const WorldcoinLogin = ({ onAuthSuccess }) => {
 			onClick={handleWorldcoinLogin}
 			className="btn btn-active btn-primary"
 		>
-			Login with Worldcoin
+			Login as Donor with World ID
 		</button>
 	);
 };

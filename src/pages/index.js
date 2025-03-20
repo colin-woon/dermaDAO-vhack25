@@ -7,7 +7,28 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../utils/firebase';
 
 export default function Home() {
-	const [isDonorAuthenticated, setIsDonorAuthenticated] = useState(false);
+	const [authState, setAuthState] = useState({
+		isDonorAuthenticated: false,
+		isCharityAuthenticated: false,
+		userId: null
+	});
+
+	const handleDonorLogin = () => {
+		setAuthState({
+			isDonorAuthenticated: true,
+			isCharityAuthenticated: false,
+			userId: null
+		});
+	};
+
+	const handleCharityLogin = (charityId) => {
+		setAuthState({
+			isDonorAuthenticated: false,
+			isCharityAuthenticated: true,
+			userId: charityId
+		});
+	};
+
 	// To verify Firestore connection
 	const [testData, setTestData] = useState(null);
 
@@ -31,40 +52,18 @@ export default function Home() {
 		fetchData();
 	}, []);
 
-	const handleDonorLogin = () => {
-		setIsDonorAuthenticated(true);
-	};
-	// const [isCharityAuthenticated, setIsCharityAuthenticated] = useState(false);
-	// const [isDonorAuthenticated, setIsDonorAuthenticated] = useState(false);
-
-	// const handleCharityLogin = () => {
-	// 	setIsCharityAuthenticated(true);
-	// };
-
-	// const handleDonorLogin = () => {
-	// 	setIsDonorAuthenticated(true);
-	// };
-
 	return (
 		<div>
-			{!isDonorAuthenticated ? (
-				<LandingPage onAuthSuccess={handleDonorLogin} />
-			) : (
+			{!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
+				<LandingPage
+					onDonorAuthSuccess={handleDonorLogin}
+					onCharityAuthSuccess={handleCharityLogin}
+				/>
+			) : authState.isDonorAuthenticated ? (
 				<DonorDashboard />
+			) : (
+				<CharityAdminDashboard charityId={authState.userId} />
 			)}
-			{/* <DonorDashboard /> */}
 		</div>
-		// <div>
-		// 	{!isCharityAuthenticated && !isDonorAuthenticated && (
-		// 		<div>
-		// 			<h1 className="text-2xl font-bold mb-4">Choose Login Method</h1>
-		// 			<WorldcoinLogin onLoginSuccess={handleDonorLogin} />
-		// 			<CharityLoginButton onLoginSuccess={handleCharityLogin} />
-		// 		</div>
-		// 	)}
-
-		// 	{isCharityAuthenticated && <CharityAdminDashboard />}
-		// 	{isDonorAuthenticated && <DonorDashboard />}
-		// </div>
 	);
 }
