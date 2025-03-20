@@ -19,21 +19,15 @@ const WorldcoinLogin = () => {
 	}, [router.query]);
 
 	const handleAuthCode = async (code) => {
-		const data = new URLSearchParams()
-		data.append('code', code)
-		data.append('grant_type', 'authorization_code')
-		data.append('redirect_uri', process.env.NEXT_PUBLIC_REDIRECT_URI)
-		console.log(data.toString());
 		try {
-			const response = await fetch('https://id.worldcoin.org/token', {
+			const response = await fetch('/api/auth/worldcoin', {
 				method: 'POST',
-				mode: 'no-cors',
 				headers: {
-					Authorization: `Basic ${btoa(`${process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID}:${process.env.WORLDCOIN_CLIENT_SECRET}`)}`,
-					'Content-Type': 'application/x-www-form-urlencoded',
+					'Content-Type': 'application/json',
 				},
-				body: data,
-			})
+				body: JSON.stringify({ code }),
+			});
+
 			if (!response.ok) {
 				const errorText = await response.text();
 				throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
