@@ -19,35 +19,54 @@ const WorldcoinLogin = () => {
 	}, [router.query]);
 
 	const handleAuthCode = async (code) => {
+		const data = new URLSearchParams()
+		data.append('code', code)
+		data.append('grant_type', 'authorization_code')
+		data.append('redirect_uri', process.env.NEXT_PUBLIC_REDIRECT_URI)
 		try {
-			const response = await fetch(`/api/auth/callback?code=${code}`);
-			const data = await response.json();
-			console.log('Authentication successful:', data);
+			const response = await fetch('https://id.worldcoin.org/token', {
+				method: 'POST',
+				headers: {
+					Authorization: `Basic ${btoa(`${process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID}:${process.env.WORLDCOIN_CLIENT_SECRET}`)}`,
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: data,
+			})
+			const data = await response.json()
+			console.log("handleAuth Success" + data);
 		} catch (error) {
-			console.error('Authentication error:', error);
+			console.log("handleAuthCode Error " + error)
 		}
+
+		// 	try {
+		// 		const response = await fetch(`/?code=${code}`);
+		// 		const data = await response.json();
+		// 		console.log('Authentication successful:', data);
+		// 	} catch (error) {
+		// 		console.error('Authentication error:', error);
+		// 	}
+		// };
+
+		const handleWorldcoinLogin = () => {
+			const params = new URLSearchParams({
+				redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
+				response_type: 'code',
+				scope: 'openid profile email',
+				client_id: process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID,
+			});
+
+			const authUrl = `https://id.worldcoin.org/authorize?${params.toString()}`;
+			window.location.href = authUrl;
+		};
+
+		return (
+			<button
+				onClick={handleWorldcoinLogin}
+				className="btn btn-active btn-primary"
+			>
+				Login with Worldcoin
+			</button>
+		);
 	};
 
-	const handleWorldcoinLogin = () => {
-		const params = new URLSearchParams({
-			redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
-			response_type: 'code',
-			scope: 'openid profile email',
-			client_id: process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID,
-		});
-
-		const authUrl = `https://id.worldcoin.org/authorize?${params.toString()}`;
-		window.location.href = authUrl;
-	};
-
-	return (
-		<button
-			onClick={handleWorldcoinLogin}
-			className="btn btn-active btn-primary"
-		>
-			Login with Worldcoin
-		</button>
-	);
-};
-
-export default WorldcoinLogin;
+	export default WorldcoinLogin;
