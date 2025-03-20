@@ -1,4 +1,5 @@
 import WorldcoinLogin from './WorldCoinLogin';
+import CharityLoginButton from './CharityLoginButton';
 import { Ripple } from './magicui/ripple';
 
 const LandingPage = ({ onAuthSuccess }) => {
@@ -16,11 +17,15 @@ const LandingPage = ({ onAuthSuccess }) => {
 			<div className="relative z-10 hero min-h-screen">
 				<div className="hero-content text-neutral-content text-center">
 					<div className="max-w-md">
-						<h1 className="mb-5 text-5xl font-bold">DermaDAO</h1>
+						<h1 className="mb-5 text-5xl font-extrabold">DermaDAO</h1>
 						<p className="mb-5">
 							Decentralized charity funding platform that leverages quadratic funding to ensure fair and impactful donations.
 						</p>
-						<WorldcoinLogin onAuthSuccess={onAuthSuccess} />					</div>
+						<div className='flex flex-col items-center justify-center space-y-4 padding'>
+							<WorldcoinLogin onAuthSuccess={onAuthSuccess} />
+							<CharityLoginButton />
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
