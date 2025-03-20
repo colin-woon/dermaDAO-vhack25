@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-const WorldcoinLogin = () => {
+const WorldcoinLogin = ({ onAuthSuccess }) => {
 	const router = useRouter();
 
 	// Handle the callback when user returns from WorldCoin
