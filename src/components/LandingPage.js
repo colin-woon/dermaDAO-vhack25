@@ -16,7 +16,7 @@ const LandingPage = ({ onDonorAuthSuccess, onCharityAuthSuccess }) => {
 					className="w-full h-full border-none p-0"
 					beamsPerSide={5}
 					beamSize={5}
-					beamDuration={100}
+					beamDuration={6}
 					gridColor="rgba(80, 5, 255, 0.3)" // violet color with opacity
 				></WarpBackground>
 			</div>
