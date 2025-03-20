@@ -8,6 +8,8 @@ const WorldcoinLogin = () => {
 	useEffect(() => {
 		// Check if we have a code in the URL
 		const { code } = router.query;
+		console.log('Current route:', router.asPath); // Add this line to log the current route
+		console.log('Router query:', router.query);   // Add this line to log all query parameters
 		console.log('WorldcoinLogin Component');
 		console.log('Code:', code);
 		if (code) {
