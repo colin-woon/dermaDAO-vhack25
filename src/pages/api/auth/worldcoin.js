@@ -10,7 +10,8 @@ export default async function handler(req, res) {
 	data.append('redirect_uri', process.env.NEXT_PUBLIC_REDIRECT_URI);
 
 	try {
-		const response = await fetch('https://id.worldcoin.org/token', {
+		// First API call to get the access token
+		const tokenResponse = await fetch('https://id.worldcoin.org/token', {
 			method: 'POST',
 			headers: {
 				'Authorization': `Basic ${Buffer.from(`${process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID}:${process.env.WORLDCOIN_CLIENT_SECRET}`).toString('base64')}`,
@@ -19,8 +20,28 @@ export default async function handler(req, res) {
 			body: data,
 		});
 
-		const result = await response.json();
-		return res.status(200).json(result);
+		const tokenResult = await tokenResponse.json();
+
+		if (!tokenResponse.ok) {
+			throw new Error(`Token error: ${JSON.stringify(tokenResult)}`);
+		}
+
+		// Second API call to get user info using the access token
+		const userInfoResponse = await fetch('https://id.worldcoin.org/userinfo', {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${tokenResult.access_token}`,
+			},
+		});
+
+		const userInfo = await userInfoResponse.json();
+
+		// Return both token and user info
+		return res.status(200).json({
+			token: tokenResult,
+			userInfo: userInfo
+		});
+
 	} catch (error) {
 		console.error('WorldID Auth Error:', error);
 		return res.status(500).json({ error: error.message });

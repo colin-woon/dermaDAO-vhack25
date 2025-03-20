@@ -34,7 +34,12 @@ const WorldcoinLogin = () => {
 			}
 
 			const result = await response.json();
-			console.log("WorldID Auth Success:", JSON.stringify(result, null, 2));
+			console.log("Token data:", result.token);
+			console.log("User info:", result.userInfo);
+
+			// Store the access token if needed
+			//   localStorage.setItem('worldcoin_access_token', result.token.access_token);
+
 			return result;
 		} catch (error) {
 			console.error("WorldID Auth Error:", error.message);
