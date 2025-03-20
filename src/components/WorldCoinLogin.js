@@ -37,36 +37,37 @@ const WorldcoinLogin = () => {
 		} catch (error) {
 			console.log("handleAuthCode Error " + error)
 		}
+	}
 
-		// 	try {
-		// 		const response = await fetch(`/?code=${code}`);
-		// 		const data = await response.json();
-		// 		console.log('Authentication successful:', data);
-		// 	} catch (error) {
-		// 		console.error('Authentication error:', error);
-		// 	}
-		// };
+	// 	try {
+	// 		const response = await fetch(`/?code=${code}`);
+	// 		const data = await response.json();
+	// 		console.log('Authentication successful:', data);
+	// 	} catch (error) {
+	// 		console.error('Authentication error:', error);
+	// 	}
+	// };
 
-		const handleWorldcoinLogin = () => {
-			const params = new URLSearchParams({
-				redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
-				response_type: 'code',
-				scope: 'openid profile email',
-				client_id: process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID,
-			});
+	const handleWorldcoinLogin = () => {
+		const params = new URLSearchParams({
+			redirect_uri: process.env.NEXT_PUBLIC_REDIRECT_URI,
+			response_type: 'code',
+			scope: 'openid profile email',
+			client_id: process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID,
+		});
 
-			const authUrl = `https://id.worldcoin.org/authorize?${params.toString()}`;
-			window.location.href = authUrl;
-		};
-
-		return (
-			<button
-				onClick={handleWorldcoinLogin}
-				className="btn btn-active btn-primary"
-			>
-				Login with Worldcoin
-			</button>
-		);
+		const authUrl = `https://id.worldcoin.org/authorize?${params.toString()}`;
+		window.location.href = authUrl;
 	};
 
-	export default WorldcoinLogin;
+	return (
+		<button
+			onClick={handleWorldcoinLogin}
+			className="btn btn-active btn-primary"
+		>
+			Login with Worldcoin
+		</button>
+	);
+};
+
+export default WorldcoinLogin;
