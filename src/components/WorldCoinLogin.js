@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
+// import { doc, setDoc, getDoc } from 'firebase/firestore';
+// import { db } from '../utils/firebase';
 
 const WorldcoinLogin = ({ onAuthSuccess }) => {
 	const router = useRouter();
