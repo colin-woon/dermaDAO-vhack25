@@ -32,8 +32,8 @@ const WorldcoinLogin = () => {
 				},
 				body: data,
 			})
-			const data = await response.json()
-			console.log("handleAuth Success" + data);
+			const result = await response.json()
+			console.log("handleAuth Success" + result);
 		} catch (error) {
 			console.log("handleAuthCode Error " + error)
 		}
