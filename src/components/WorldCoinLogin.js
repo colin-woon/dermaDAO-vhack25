@@ -23,6 +23,7 @@ const WorldcoinLogin = () => {
 		data.append('code', code)
 		data.append('grant_type', 'authorization_code')
 		data.append('redirect_uri', process.env.NEXT_PUBLIC_REDIRECT_URI)
+		console.log(data.toString());
 		try {
 			const response = await fetch('https://id.worldcoin.org/token', {
 				method: 'POST',
@@ -32,21 +33,19 @@ const WorldcoinLogin = () => {
 				},
 				body: data,
 			})
-			const result = await response.json()
-			console.log("handleAuth Success" + result);
+			if (!response.ok) {
+				const errorText = await response.text();
+				throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+			}
+
+			const result = await response.json();
+			console.log("WorldID Auth Success:", JSON.stringify(result, null, 2));
+			return result;
 		} catch (error) {
-			console.log("handleAuthCode Error " + error)
+			console.error("WorldID Auth Error:", error.message);
+			throw error;
 		}
 	}
-
-	// 	try {
-	// 		const response = await fetch(`/?code=${code}`);
-	// 		const data = await response.json();
-	// 		console.log('Authentication successful:', data);
-	// 	} catch (error) {
-	// 		console.error('Authentication error:', error);
-	// 	}
-	// };
 
 	const handleWorldcoinLogin = () => {
 		const params = new URLSearchParams({
