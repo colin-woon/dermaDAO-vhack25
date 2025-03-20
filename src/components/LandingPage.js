@@ -1,7 +1,7 @@
 import WorldcoinLogin from './WorldCoinLogin';
 import { Ripple } from './magicui/ripple';
 
-const LandingPage = () => {
+const LandingPage = ({ onAuthSuccess }) => {
 	// console.log(btoa(process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID))
 	// console.log(btoa(process.env.WORLDCOIN_CLIENT_SECRET))
 	return (
@@ -20,8 +20,7 @@ const LandingPage = () => {
 						<p className="mb-5">
 							Decentralized charity funding platform that leverages quadratic funding to ensure fair and impactful donations.
 						</p>
-						<WorldcoinLogin />
-					</div>
+						<WorldcoinLogin onAuthSuccess={onAuthSuccess} />					</div>
 				</div>
 			</div>
 		</div>

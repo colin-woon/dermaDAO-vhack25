@@ -38,7 +38,11 @@ const WorldcoinLogin = () => {
 			console.log("User info:", result.userInfo);
 
 			// Store the access token if needed
+			const userSub = result.userInfo.sub;
+			localStorage.setItem('worldcoin_user_sub', userSub);
 			//   localStorage.setItem('worldcoin_access_token', result.token.access_token);
+
+			props.onAuthSuccess();
 
 			return result;
 		} catch (error) {

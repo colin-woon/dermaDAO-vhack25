@@ -6,6 +6,11 @@ import CharityLoginButton from '../components/CharityLoginButton';
 import LandingPage from '../components/LandingPage';
 
 export default function Home() {
+	const [isDonorAuthenticated, setIsDonorAuthenticated] = useState(false);
+
+	const handleDonorLogin = () => {
+		setIsDonorAuthenticated(true);
+	};
 	// const [isCharityAuthenticated, setIsCharityAuthenticated] = useState(false);
 	// const [isDonorAuthenticated, setIsDonorAuthenticated] = useState(false);
 
@@ -19,9 +24,11 @@ export default function Home() {
 
 	return (
 		<div>
-			<LandingPage />
-			{/* <CharityAdminDashboard /> */}
-			{/* <DonorDashboard /> */}
+			{!isDonorAuthenticated ? (
+				<LandingPage onAuthSuccess={handleDonorLogin} />
+			) : (
+				<DonorDashboard />
+			)}
 		</div>
 		// <div>
 		// 	{!isCharityAuthenticated && !isDonorAuthenticated && (
