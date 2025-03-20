@@ -27,6 +27,7 @@ const WorldcoinLogin = () => {
 		try {
 			const response = await fetch('https://id.worldcoin.org/token', {
 				method: 'POST',
+				mode: 'no-cors',
 				headers: {
 					Authorization: `Basic ${btoa(`${process.env.NEXT_PUBLIC_WORLDCOIN_CLIENT_ID}:${process.env.WORLDCOIN_CLIENT_SECRET}`)}`,
 					'Content-Type': 'application/x-www-form-urlencoded',
