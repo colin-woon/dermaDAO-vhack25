@@ -8,6 +8,7 @@ const WorldcoinLogin = () => {
 	useEffect(() => {
 		// Check if we have a code in the URL
 		const { code } = router.query;
+		console.log('WorldcoinLogin Component');
 		console.log('Code:', code);
 		if (code) {
 			// Process the authentication code
