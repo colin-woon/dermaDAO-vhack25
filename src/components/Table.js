@@ -1,6 +1,6 @@
 const Table = () => {
 	return (
-		<div class="overflow-x-auto rounded-box border border-base-content/5 bg-purple-950/20">
+		<div class="overflow-x-auto rounded-box bg-purple-950/20">
 			<table class="table">
 				<thead>
 					<tr>
