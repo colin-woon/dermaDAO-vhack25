@@ -31,7 +31,10 @@ const CharityAdminDashboardNavBar = () => {
 						</svg>
 					</div>
 				</div>
-				<a className="btn btn-ghost text-xl">DermaDAO</a>
+				<a className="btn btn-ghost normal-case flex items-center gap-1">
+					<img src="/dermaDAOlogo.png" alt="DermaDAO Logo" className="h-10 w-10 -mr-2" />
+					<span className="text-xl">DermaDAO</span>
+				</a>
 			</div>
 			<div className="navbar-center hidden lg:flex">
 			</div>

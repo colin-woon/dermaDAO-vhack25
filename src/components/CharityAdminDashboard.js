@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import CharityAdminDashboardNavBar from './CharityAdminDashboardNavBar';
+import Footer from './Footer';
+import CardCharityAdminDashboard from './CardCharityAdminDashboard';
 
 const CharityAdminDashboard = () => {
 	const [score, setScore] = useState(null);
@@ -52,9 +55,16 @@ const CharityAdminDashboard = () => {
 	});
 
 	return (
-		<div className="p-6 max-w-2xl mx-auto">
-			<h1 className="text-2xl font-bold mb-6">Charity Admin Dashboard</h1>
-
+		<div className="flex flex-col justify-between min-h-screen bg-gray-950">
+			<CharityAdminDashboardNavBar />
+			<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full mt-10 mb-10'>
+				<CardCharityAdminDashboard />
+				<CardCharityAdminDashboard />
+				<CardCharityAdminDashboard />
+				<CardCharityAdminDashboard />
+				<CardCharityAdminDashboard />
+				<CardCharityAdminDashboard />
+			</div>
 			<div
 				{...getRootProps()}
 				className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500"
@@ -80,6 +90,7 @@ const CharityAdminDashboard = () => {
 					</div>
 				</div>
 			)}
+			<Footer />
 		</div>
 	);
 };
