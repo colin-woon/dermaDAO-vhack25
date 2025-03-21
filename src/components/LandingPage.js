@@ -23,7 +23,13 @@ const LandingPage = ({ onDonorAuthSuccess, onCharityAuthSuccess }) => {
 			<div className="relative z-10 hero min-h-screen">
 				<div className="hero-content text-neutral-content text-center">
 					<div className="max-w-md">
-						<h1 className="mb-5 text-7xl font-bold">DermaDAO</h1>
+						<div className='flex flex-row'>
+							<h1 className="-mr-7 mb-5 text-7xl font-bold flex items-center justify-center">
+								DermaDAO
+							</h1>
+							<div className='p-2'></div>
+							<img src="/dermaDAOlogo.png" alt="DermaDAO Logo" className="h-20 w-20" />
+						</div>
 						<p className="mb-5 text-1xl italic">
 							Decentralized charity funding platform that leverages quadratic funding to ensure fair and impactful donations.
 						</p>
