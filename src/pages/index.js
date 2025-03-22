@@ -29,43 +29,53 @@ export default function Home() {
 		});
 	};
 
-	// To verify Firestore connection
-	const [testData, setTestData] = useState(null);
 
+	const [dbStatus, setDbStatus] = useState({
+		isConnected: false,
+		message: 'Checking database connection...'
+	});
+
+	// Test database connection via API route
 	useEffect(() => {
-		const fetchData = async () => {
+		const testConnection = async () => {
 			try {
-				const docRef = doc(db, 'users', 'RVIlAPLwdyw0roSCHlar');
-				const docSnap = await getDoc(docRef);
+				const response = await fetch('/api/dbConnection');
+				const data = await response.json();
 
-				if (docSnap.exists()) {
-					setTestData(docSnap.data().test);
-					console.log("Retrieved test value:", docSnap.data().test);
-				} else {
-					console.log("No such document!");
-				}
+				setDbStatus({
+					isConnected: data.success,
+					message: data.message
+				});
 			} catch (error) {
-				console.error("Error fetching document:", error);
+				console.error('Database connection error:', error);
+				setDbStatus({
+					isConnected: false,
+					message: `Failed to connect to database: ${error.message}`
+				});
 			}
 		};
 
-		fetchData();
+		testConnection();
 	}, []);
 
 	return (
 		<div>
+			<div className={`db-status ${dbStatus.isConnected ? 'success' : 'error'}`}>
+				<p>{dbStatus.message}</p>
+			</div>
 			{/* <DonorDashboard /> */}
-			{!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
-				<LandingPage
-					onDonorAuthSuccess={handleDonorLogin}
-					onCharityAuthSuccess={handleCharityLogin}
-				/>
-			) : authState.isDonorAuthenticated ? (
-				<DonorDashboard />
-			) : (
-				<CharityAdminDashboard charityId={authState.userId} />
-			)}
+			{/* {!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
+					<LandingPage
+						onDonorAuthSuccess={handleDonorLogin}
+						onCharityAuthSuccess={handleCharityLogin}
+					/>
+				) : authState.isDonorAuthenticated ? (
+					<DonorDashboard />
+				) : (
+					<CharityAdminDashboard charityId={authState.userId} />
+				)} */}
 			{/* <CharityAdminDashboard charityId={authState.userId} /> */}
 		</div>
 	);
 }
+
