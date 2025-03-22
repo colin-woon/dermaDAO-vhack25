@@ -55,7 +55,7 @@ export default function Home() {
 	return (
 		<div>
 			{/* <DonorDashboard /> */}
-			{/* {!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
+			{!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
 				<LandingPage
 					onDonorAuthSuccess={handleDonorLogin}
 					onCharityAuthSuccess={handleCharityLogin}
@@ -64,8 +64,8 @@ export default function Home() {
 				<DonorDashboard />
 			) : (
 				<CharityAdminDashboard charityId={authState.userId} />
-			)} */}
-			<CharityAdminDashboard charityId={authState.userId} />
+			)}
+			{/* <CharityAdminDashboard charityId={authState.userId} /> */}
 		</div>
 	);
 }
