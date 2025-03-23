@@ -63,4 +63,25 @@ const Card = () => {
 	);
 }
 
+// const Card = ({ proposal }) => {
+// 	return (
+// 		<div className="card w-96 bg-base-100 shadow-xl">
+// 			<div className="card-body">
+// 				<h2 className="card-title">{proposal?.title || 'Loading...'}</h2>
+// 				<p>{proposal?.description || 'No description available'}</p>
+// 				{proposal && (
+// 					<>
+// 						<p>Funding Goal: {proposal.funding_goal} ETH</p>
+// 						<p>Status: {proposal.status}</p>
+// 						<p>Duration: {proposal.duration} days</p>
+// 					</>
+// 				)}
+// 				<div className="card-actions justify-end">
+// 					<button className="btn btn-primary">View Details</button>
+// 				</div>
+// 			</div>
+// 		</div>
+// 	);
+// }
+
 export default Card;

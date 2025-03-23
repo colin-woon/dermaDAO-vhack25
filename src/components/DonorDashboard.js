@@ -5,7 +5,7 @@ import Card from './Card';
 import { useState } from 'react';
 
 const DonorDashboard = () => {
-	// To verify getCharities API working
+	// // To verify getCharities API working
 	// const [charities, setCharities] = useState([]);
 
 	// const fetchCharities = async () => {
@@ -24,6 +24,30 @@ const DonorDashboard = () => {
 	// 	}
 	// };
 
+	// // Test getProposals
+	// const [proposals, setProposals] = useState([]);
+
+	// const fetchProposals = async () => {
+	// 	try {
+	// 		const token = localStorage.getItem('authToken');
+	// 		const response = await fetch('/api/proposals', {
+	// 			headers: {
+	// 				'Authorization': `Bearer ${token}`
+	// 			}
+	// 		});
+	// 		const data = await response.json();
+
+	// 		if (data.success) {
+	// 			console.log('Fetched proposals:', data.data);
+	// 			setProposals(data.data);
+	// 		} else {
+	// 			console.error('Failed to fetch proposals:', data.message);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error('Error fetching proposals:', error);
+	// 	}
+	// };
+
 	return (
 		<div className='flex flex-col justify-between min-h-screen bg-gray-950'>
 			{/* <h1>Donor Dashboard</h1> */}
@@ -35,6 +59,12 @@ const DonorDashboard = () => {
 				>
 					Test Get Charities
 				</button> */}
+				{/* <button
+					className="btn btn-primary w-fit"
+					onClick={fetchProposals}
+				>
+					Test Get Proposals
+				</button> */}
 				<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full'>
 					<Card />
 					<Card />
@@ -42,6 +72,15 @@ const DonorDashboard = () => {
 					<Card />
 					<Card />
 					<Card />
+					{/* {proposals.length > 0 ?
+						proposals.map((proposal, index) => (
+							<Card key={proposal.id || index} proposal={proposal} />
+						))
+						:
+						Array(6).fill(null).map((_, index) => (
+							<Card key={index} />
+						))
+					} */}
 				</div>
 				<Table />
 			</div>
