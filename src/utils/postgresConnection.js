@@ -10,6 +10,16 @@ if (!global.pool) {
 		} : false
 	});
 
+	// Test the connection
+	pool.connect((err, client, release) => {
+		if (err) {
+			console.error('Database connection error:', err.stack);
+		} else {
+			console.log('Database connected successfully');
+			release();
+		}
+	});
+
 	pool.on('error', (err) => {
 		console.error('Unexpected error on idle client', err);
 		process.exit(-1);
