@@ -3,8 +3,8 @@ import CharityAdminDashboard from '../components/CharityAdminDashboard';
 import DonorDashboard from '../components/DonorDashboard';
 import CharityLoginButton from '../components/CharityLoginButton';
 import LandingPage from '../components/LandingPage';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../utils/firebase';
+// import { doc, getDoc } from 'firebase/firestore';
+// import { db } from '../utils/firebase';
 
 export default function Home() {
 	const [authState, setAuthState] = useState({
@@ -35,36 +35,36 @@ export default function Home() {
 		message: 'Checking database connection...'
 	});
 
-	// Test database connection via API route
-	useEffect(() => {
-		const testConnection = async () => {
-			try {
-				const response = await fetch('/api/dbConnection');
-				const data = await response.json();
+	// // Test database connection via API route
+	// useEffect(() => {
+	// 	const testConnection = async () => {
+	// 		try {
+	// 			const response = await fetch('/api/dbConnection');
+	// 			const data = await response.json();
 
-				setDbStatus({
-					isConnected: data.success,
-					message: data.message
-				});
-			} catch (error) {
-				console.error('Database connection error:', error);
-				setDbStatus({
-					isConnected: false,
-					message: `Failed to connect to database: ${error.message}`
-				});
-			}
-		};
+	// 			setDbStatus({
+	// 				isConnected: data.success,
+	// 				message: data.message
+	// 			});
+	// 		} catch (error) {
+	// 			console.error('Database connection error:', error);
+	// 			setDbStatus({
+	// 				isConnected: false,
+	// 				message: `Failed to connect to database: ${error.message}`
+	// 			});
+	// 		}
+	// 	};
 
-		testConnection();
-	}, []);
+	// 	testConnection();
+	// }, []);
 
 	return (
 		<div>
-			<div className={`db-status ${dbStatus.isConnected ? 'success' : 'error'}`}>
+			{/* <div className={`db-status ${dbStatus.isConnected ? 'success' : 'error'}`}>
 				<p>{dbStatus.message}</p>
-			</div>
+			</div> */}
 			{/* <DonorDashboard /> */}
-			{/* {!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
+			{!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
 					<LandingPage
 						onDonorAuthSuccess={handleDonorLogin}
 						onCharityAuthSuccess={handleCharityLogin}
@@ -73,7 +73,7 @@ export default function Home() {
 					<DonorDashboard />
 				) : (
 					<CharityAdminDashboard charityId={authState.userId} />
-				)} */}
+				)}
 			{/* <CharityAdminDashboard charityId={authState.userId} /> */}
 		</div>
 	);

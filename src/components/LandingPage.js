@@ -35,7 +35,9 @@ const LandingPage = ({ onDonorAuthSuccess, onCharityAuthSuccess }) => {
 						</p>
 						<div className='flex flex-col items-center justify-center space-y-4 padding'>
 							<WorldcoinLogin onAuthSuccess={onDonorAuthSuccess} />
+							<button className="btn btn-primary" onClick={onDonorAuthSuccess}>TEST: LOGIN AS DONOR</button>
 							<CharityLoginButton onLoginSuccess={handleCharityLoginSuccess} />
+							<button className="btn btn-secondary" onClick={() => handleCharityLoginSuccess(1)}>TEST: LOGIN AS CHARITY</button>
 						</div>
 					</div>
 				</div>
