@@ -3,8 +3,22 @@ import Footer from './Footer';
 import Table from './Table';
 import Card from './Card';
 import { useState } from 'react';
+import { FlickeringGrid } from './magicui/flickering-grid';
 
 const DonorDashboard = () => {
+    const [selectedCard, setSelectedCard] = useState(null);
+
+    // Mock data for the table
+    const mockTableData = [
+        { id: 1, date: '2025-03-24', amount: '1000 DERMA', status: 'Completed', recipient: '0x1234...5678' },
+        { id: 2, date: '2025-03-23', amount: '500 DERMA', status: 'Pending', recipient: '0x8765...4321' },
+        { id: 3, date: '2025-03-22', amount: '750 DERMA', status: 'Completed', recipient: '0x2468...1357' },
+    ];
+
+    const handleCardClick = (cardId) => {
+        setSelectedCard(cardId);
+    };
+
 	// // To verify getCharities API working
 	// const [charities, setCharities] = useState([]);
 
@@ -49,8 +63,18 @@ const DonorDashboard = () => {
 	// };
 
 	return (
-		<div className='flex flex-col justify-between min-h-screen bg-gray-950'>
-			{/* <h1>Donor Dashboard</h1> */}
+		<div className='relative flex flex-col justify-between min-h-screen bg-gray-950'>
+		 <div className="fixed inset-0 ">
+                <FlickeringGrid
+                    color="rgb(80, 5, 255)"
+                    maxOpacity={0.5}
+                    className="w-full h-full"
+                    squareSize={3}
+                    gridGap={3}
+                    flickerChance={0.7}
+                />
+            </div>
+			<div className="relative z-10">
 			<DonorDashboardNavBar />
 			<div className='flex flex-col justify-around min-h-screen p-10 space-y-12'>
 				{/* <button
@@ -66,25 +90,19 @@ const DonorDashboard = () => {
 					Test Get Proposals
 				</button> */}
 				<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full'>
-					<Card />
-					<Card />
-					<Card />
-					<Card />
-					<Card />
-					<Card />
-					{/* {proposals.length > 0 ?
-						proposals.map((proposal, index) => (
-							<Card key={proposal.id || index} proposal={proposal} />
-						))
-						:
-						Array(6).fill(null).map((_, index) => (
-							<Card key={index} />
-						))
-					} */}
-				</div>
-				<Table />
+				{[1, 2, 3, 4, 5, 6].map((cardId) => (
+                        <Card 
+                            key={cardId}
+                            cardId={cardId}
+                            onClick={() => handleCardClick(cardId)}
+                            isSelected={selectedCard === cardId}
+                            mockTableData={mockTableData}
+                        />
+                    ))}                
+					</div>
 			</div>
 			<Footer />
+			</div>
 		</div>
 	);
 }

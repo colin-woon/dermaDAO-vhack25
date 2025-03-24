@@ -68,7 +68,7 @@ const CharityAdminDashboardNavBar = () => {
 	};
 
 	return (
-		<div className="navbar bg-violet-950 shadow-sm">
+		<div className="navbar bg-violet-950/80 shadow-sm">
 			<div className="navbar-start">
 				<div className="dropdown">
 					<div tabIndex="0" role="button" className="btn btn-ghost lg:hidden">

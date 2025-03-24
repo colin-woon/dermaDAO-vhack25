@@ -53,7 +53,7 @@ const CardCharityAdminDashboard = () => {
 	};
 
 	return (
-		<div className="card bg-purple-950/40 w-1/4 shadow-sm rounded-3xl">
+		<div className="card bg-purple-950/90 w-1/4 shadow-sm rounded-3xl">
 			<figure>
 				<img
 					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
@@ -61,7 +61,9 @@ const CardCharityAdminDashboard = () => {
 			</figure>
 			<div className="card-body">
 				<h2 className="card-title">Project Name</h2>
-				<p>Upload your project proposal to get it analyzed</p>
+				<p>Estimated amount: </p>
+				<p>Distributed Funds: </p>
+				<p>Description: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
 				<div className="card-actions justify-end">
 					<input
 						type="file"
@@ -70,6 +72,11 @@ const CardCharityAdminDashboard = () => {
 						accept=".pdf"
 						onChange={handleFileUpload}
 					/>
+					<button
+						className="btn btn-secondary"
+					>
+					View Proposals
+					</button>
 					<button
 						className="btn btn-primary"
 						onClick={() => fileInputRef.current.click()}

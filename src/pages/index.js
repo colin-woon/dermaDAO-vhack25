@@ -3,6 +3,7 @@ import CharityAdminDashboard from '../components/CharityAdminDashboard';
 import DonorDashboard from '../components/DonorDashboard';
 import CharityLoginButton from '../components/CharityLoginButton';
 import LandingPage from '../components/LandingPage';
+import BlockchainTest from '../components/BlockchainTest';
 // import { doc, getDoc } from 'firebase/firestore';
 // import { db } from '../utils/firebase';
 
@@ -64,6 +65,7 @@ export default function Home() {
 				<p>{dbStatus.message}</p>
 			</div> */}
 			{/* <DonorDashboard /> */}
+			{/* <BlockchainTest /> */}
 			{!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
 					<LandingPage
 						onDonorAuthSuccess={handleDonorLogin}

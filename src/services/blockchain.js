@@ -25,6 +25,45 @@ if (typeof window !== 'undefined') {
 	}
 }
 
+/**
+ * AVAILABLE SMART CONTRACT FUNCTIONS
+ * 
+ * Authentication:
+ * - connectWallet(): Connect MetaMask wallet
+ * - verifySignature(message, signature, address): Verify MetaMask signature
+ * 
+ * Read Functions:
+ * - getCharity(charityId): Get charity details
+ * - getProject(projectId): Get project details
+ * - getCurrentRoundId(): Get current funding round ID
+ * - getRound(roundId): Get round details
+ * - getProposal(proposalId): Get proposal details
+ * - getTransaction(transactionId): Get transaction details
+ * - getProjectWalletBalance(projectId): Get project's wallet balance
+ * - getProjectWalletAddress(projectId): Get project's wallet address
+ * - getCharityProjects(charityId): Get all projects for a charity
+ * - getProjectProposals(projectId): Get all proposals for a project
+ * - getProjectTransactions(projectId): Get all transactions for a project
+ * - getCurrentRoundProjectStats(): Get current round statistics
+ * - getTokenBalance(address): Get DermaCoin balance
+ * 
+ * Write Functions (Require Signer):
+ * - registerCharity(signer, name, description): Register new charity
+ * - verifyCharity(signer, charityId, verified): Verify a charity (admin only)
+ * - createProject(signer, charityId, name, description, ipfsHash): Create new project
+ * - donate(signer, projectId, amount): Donate to a project
+ * - distributeRoundFunds(signer): Distribute round funds (admin only)
+ * - submitProposal(signer, projectId, description, ipfsHash, requestedAmount, destinationAddress): Submit funding proposal
+ * - approveProposal(signer, proposalId): Approve a proposal
+ * - claimFunds(signer, proposalId): Claim approved funds
+ * - setFeeWallet(signer, feeWalletAddress): Set fee wallet (admin only)
+ * 
+ * Utilities:
+ * - getSignedContracts(signer): Get contract instances with signer
+ * - utils.formatUnits(amount): Format token amounts
+ * - utils.parseUnits(amount): Parse token amounts
+ */
+
 // HELPER FUNCTIONS
 
 /**
