@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 
-const CardCharityAdminDashboard = () => {
+const CardCharityAdminDashboard = ( { mockAmount } ) => {
 	const [isResultModalOpen, setIsResultModalOpen] = useState(false);
 	const [score, setScore] = useState(null);
 	const [explanation, setExplanation] = useState('');
@@ -61,10 +61,10 @@ const CardCharityAdminDashboard = () => {
 			</figure>
 			<div className="card-body">
 				<h2 className="card-title">Project Name</h2>
-				<p>Estimated amount: </p>
+				<p>Estimated amount: {mockAmount}/10000 USDC</p>
 				<p>Distributed Funds: </p>
 				<p>Description: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-				<div className="card-actions justify-end">
+				<div className="card-actions flex justify-between items-center w-full gap-1">
 					<input
 						type="file"
 						ref={fileInputRef}
@@ -73,12 +73,17 @@ const CardCharityAdminDashboard = () => {
 						onChange={handleFileUpload}
 					/>
 					<button
-						className="btn btn-secondary"
+						className="btn btn-accent btn-sm w-[32%] text-xs"
 					>
-					View Proposals
+					Transactions
 					</button>
 					<button
-						className="btn btn-primary"
+						className="btn btn-secondary btn-sm w-[32%] text-xs"
+					>
+					Status
+					</button>
+					<button
+						className="btn btn-primary btn-sm w-[32%] text-xs"
 						onClick={() => fileInputRef.current.click()}
 						disabled={loading}
 					>

@@ -21,12 +21,11 @@ const CharityAdminDashboard = () => {
 
 			<CharityAdminDashboardNavBar />
 			<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full mt-10 mb-10'>
-				<CardCharityAdminDashboard />
-				<CardCharityAdminDashboard />
-				<CardCharityAdminDashboard />
-				<CardCharityAdminDashboard />
-				<CardCharityAdminDashboard />
-				<CardCharityAdminDashboard />
+				<CardCharityAdminDashboard mockAmount={5000}/>
+				<CardCharityAdminDashboard mockAmount={3000}/>
+				<CardCharityAdminDashboard mockAmount={6000}/>
+				<CardCharityAdminDashboard mockAmount={8000}/>
+				<CardCharityAdminDashboard mockAmount={9000}/>
 			</div>
 			<Footer />
 					</div>

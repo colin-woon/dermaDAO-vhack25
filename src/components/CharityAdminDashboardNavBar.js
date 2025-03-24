@@ -86,7 +86,12 @@ const CharityAdminDashboardNavBar = () => {
 			</div>
 			<div className="navbar-end">
 				<button
-					className="btn btn-primary"
+					className="btn btn-accent"
+				>
+				Create Project
+				</button>
+				<button
+					className="btn btn-primary ml-2"
 					onClick={connectWallet}
 				>
 					{isConnected ?

@@ -90,7 +90,7 @@ const DonorDashboard = () => {
 					Test Get Proposals
 				</button> */}
 				<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full'>
-				{[1, 2, 3, 4, 5, 6].map((cardId) => (
+				{[1, 2, 3, 4, 5].map((cardId) => (
                         <Card 
                             key={cardId}
                             cardId={cardId}
