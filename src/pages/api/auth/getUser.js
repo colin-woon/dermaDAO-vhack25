@@ -1,5 +1,5 @@
 import { auth } from '@/middleware/auth';
-import { pool as db } from '@/utils/postgresConnection'; // Make sure this import exists
+import { pool } from '@/utils/postgresConnection';
 
 export default async function handler(req, res) {
 	if (req.method !== 'GET') {
@@ -7,55 +7,47 @@ export default async function handler(req, res) {
 	}
 
 	try {
-		// Apply auth middleware
-		const decoded = await auth(req, res);
-		console.log('Auth successful, user:', decoded); // Debug log
+		const user = await auth(req);
 
-		if (!db) {
-			console.error('Database connection not initialized');
-			return res.status(500).json({
-				message: 'Database connection error'
+		// Get user details from database
+		const userResult = await pool.query(
+			'SELECT id, wallet_address, role, username, created_at FROM users WHERE wallet_address = $1',
+			[user.walletAddress]
+		);
+
+		if (userResult.rows.length === 0) {
+			return res.status(404).json({
+				success: false,
+				message: 'User not found'
 			});
 		}
 
-		const { walletAddress, role: decodedRole } = decoded; // Get role from decoded token
-		console.log('Fetching user with wallet:', walletAddress);
+		const userData = userResult.rows[0];
 
-		// Get user profile from database
-		const result = await db.query(
-			'SELECT * FROM users WHERE wallet_address = $1',
-			[walletAddress]
-		);
-
-		console.log('User lookup result:', result.rows.length > 0 ? 'User found' : 'User not found');
-
-		let user;
-
-		if (result.rows.length === 0) {
-			// Create new user
-			console.log('Creating new user with role:', decodedRole);
-			const newUserResult = await db.query(
-				'INSERT INTO users (wallet_address, role, username) VALUES ($1, $2, $3) RETURNING *',
-				[walletAddress, decodedRole, `User-${walletAddress.slice(0, 8)}`]
+		// If user is a charity, get charity information
+		let charityData = null;
+		if (userData.role === 'charity') {
+			const charityResult = await pool.query(
+				'SELECT id, blockchain_id, name, description, is_verified FROM charities WHERE admin_id = $1',
+				[userData.id]
 			);
-			user = newUserResult.rows[0];
-		} else {
-			user = result.rows[0];
+			if (charityResult.rows.length > 0) {
+				charityData = charityResult.rows[0];
+			}
 		}
+
 		return res.status(200).json({
+			success: true,
 			user: {
-				walletAddress: user.wallet_address,
-				role: user.role,
-				name: user.name,
-				email: user.email,
-				createdAt: user.created_at
+				...userData,
+				charity: charityData
 			}
 		});
 	} catch (error) {
-		console.error('Profile fetch error:', error);
+		console.error('Error getting user:', error);
 		return res.status(500).json({
-			message: 'Internal server error',
-			details: process.env.NODE_ENV === 'development' ? error.message : undefined
+			success: false,
+			message: 'Error getting user information'
 		});
 	}
 }

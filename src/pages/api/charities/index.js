@@ -45,36 +45,48 @@ async function createCharity(req, res) {
 			});
 		}
 
-		const { name, description, website, documents } = req.body;
+		const { name, description, blockchainId, ownerAddress } = req.body;
+		console.log('Creating charity with data:', req.body); // Debug log
 
 		// Input validation
-		if (!name || !description) {
+		if (!name || !description || !blockchainId || !ownerAddress) {
 			return res.status(400).json({
 				success: false,
-				message: 'Name and description are required'
+				message: 'Name, description, blockchain ID, and owner address are required'
 			});
 		}
 
-		// Upload documents to IPFS if provided
-		let documentsHash = null;
-		if (documents) {
-			documentsHash = await uploadToIPFS(documents);
+		// Get admin_id from users table using wallet address
+		const userResult = await pool.query(
+			'SELECT id FROM users WHERE wallet_address = $1',
+			[ownerAddress]
+		);
+
+		if (userResult.rows.length === 0) {
+			return res.status(400).json({
+				success: false,
+				message: 'User not found for the given wallet address'
+			});
 		}
+
+		const adminId = userResult.rows[0].id;
 
 		// Insert into database
 		const result = await pool.query(
 			`INSERT INTO charities (
-        name,
-        description,
-        website,
-        documents_hash,
-        wallet_address,
-        status,
-        created_at
-      ) VALUES ($1, $2, $3, $4, $5, $6, NOW())
-      RETURNING *`,
-			[name, description, website, documentsHash, user.walletAddress, 'pending']
+				name,
+				description,
+				blockchain_id,
+				admin_id,
+				is_verified,
+				created_at,
+				updated_at
+			) VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+			RETURNING *`,
+			[name, description, blockchainId, adminId, false]
 		);
+
+		console.log('Charity created in database:', result.rows[0]); // Debug log
 
 		return res.status(201).json({
 			success: true,
@@ -84,7 +96,7 @@ async function createCharity(req, res) {
 		console.error('Error creating charity:', error);
 		return res.status(500).json({
 			success: false,
-			message: 'Error creating charity'
+			message: `Error creating charity: ${error.message}`
 		});
 	}
 }

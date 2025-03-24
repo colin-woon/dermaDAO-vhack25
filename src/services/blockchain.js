@@ -27,11 +27,11 @@ if (typeof window !== 'undefined') {
 
 /**
  * AVAILABLE SMART CONTRACT FUNCTIONS
- * 
+ *
  * Authentication:
  * - connectWallet(): Connect MetaMask wallet
  * - verifySignature(message, signature, address): Verify MetaMask signature
- * 
+ *
  * Read Functions:
  * - getCharity(charityId): Get charity details
  * - getProject(projectId): Get project details
@@ -46,7 +46,7 @@ if (typeof window !== 'undefined') {
  * - getProjectTransactions(projectId): Get all transactions for a project
  * - getCurrentRoundProjectStats(): Get current round statistics
  * - getTokenBalance(address): Get DermaCoin balance
- * 
+ *
  * Write Functions (Require Signer):
  * - registerCharity(signer, name, description): Register new charity
  * - verifyCharity(signer, charityId, verified): Verify a charity (admin only)
@@ -57,7 +57,7 @@ if (typeof window !== 'undefined') {
  * - approveProposal(signer, proposalId): Approve a proposal
  * - claimFunds(signer, proposalId): Claim approved funds
  * - setFeeWallet(signer, feeWalletAddress): Set fee wallet (admin only)
- * 
+ *
  * Utilities:
  * - getSignedContracts(signer): Get contract instances with signer
  * - utils.formatUnits(amount): Format token amounts
@@ -119,10 +119,39 @@ export const verifySignature = (message, signature, address) => {
  */
 export const getCharity = async (charityId) => {
 	try {
-		return await charityPlatform.charities(charityId);
+		console.log('Fetching charity from blockchain with ID:', charityId);
+		console.log('Using contract address:', CHARITY_PLATFORM_ADDRESS);
+
+		// Validate charity ID
+		if (!charityId || isNaN(charityId)) {
+			throw new Error(`Invalid charity ID: ${charityId}`);
+		}
+
+		// Log contract state
+		console.log('Contract instance:', {
+			address: charityPlatform.target,
+			interface: charityPlatform.interface.format()
+		});
+
+		// Attempt to call the contract
+		const charity = await charityPlatform.charities(charityId);
+		console.log('Raw charity data from blockchain:', charity);
+
+		// If we get here, the call was successful
+		return charity;
 	} catch (error) {
-		console.error('Error fetching charity:', error);
-		throw new Error('Failed to fetch charity from blockchain');
+		console.error('Detailed error in getCharity:', {
+			message: error.message,
+			code: error.code,
+			data: error.data,
+			transaction: error.transaction
+		});
+
+		if (error.code === 'CALL_EXCEPTION') {
+			throw new Error(`Charity ID ${charityId} does not exist on the blockchain`);
+		}
+
+		throw new Error(`Failed to fetch charity: ${error.message}`);
 	}
 };
 
@@ -284,12 +313,21 @@ export const getTokenBalance = async (address) => {
  */
 export const registerCharity = async (signer, name, description) => {
 	try {
+		console.log('Getting signed contracts...'); // Debug log
 		const { charityPlatform: signedCharityPlatform } = getSignedContracts(signer);
+
+		console.log('Registering charity with params:', { name, description }); // Debug log
 		const tx = await signedCharityPlatform.registerCharity(name, description);
-		return await tx.wait();
+		console.log('Transaction submitted:', tx); // Debug log
+
+		console.log('Waiting for transaction confirmation...'); // Debug log
+		const receipt = await tx.wait();
+		console.log('Transaction receipt:', receipt); // Debug log
+
+		return receipt;
 	} catch (error) {
-		console.error('Error registering charity:', error);
-		throw new Error('Failed to register charity');
+		console.error('Error in registerCharity:', error); // Detailed error log
+		throw new Error(`Failed to register charity: ${error.message}`);
 	}
 };
 
@@ -312,12 +350,69 @@ export const verifyCharity = async (signer, charityId, verified) => {
  */
 export const createProject = async (signer, charityId, name, description, ipfsHash) => {
 	try {
+		console.log('Creating project with params:', {
+			charityId,
+			name,
+			description,
+			ipfsHash
+		});
+
+		// Get signed contract
+		console.log('Getting signed contract...');
 		const { charityPlatform: signedCharityPlatform } = getSignedContracts(signer);
-		const tx = await signedCharityPlatform.createProject(charityId, name, description, ipfsHash);
-		return await tx.wait();
+		console.log('Contract address:', signedCharityPlatform.target);
+
+		// Estimate gas for the transaction
+		console.log('Estimating gas...');
+		const gasEstimate = await signedCharityPlatform.createProject.estimateGas(
+			charityId,
+			name,
+			description,
+			ipfsHash
+		);
+		console.log('Gas estimate:', gasEstimate.toString());
+
+		// Add 20% buffer to gas estimate
+		const gasLimit = Math.floor(gasEstimate.toString() * 1.2);
+		console.log('Using gas limit:', gasLimit);
+
+		// Submit transaction with gas limit
+		console.log('Submitting transaction...');
+		const tx = await signedCharityPlatform.createProject(
+			charityId,
+			name,
+			description,
+			ipfsHash,
+			{ gasLimit }
+		);
+		console.log('Transaction submitted:', tx);
+
+		console.log('Waiting for transaction confirmation...');
+		const receipt = await tx.wait();
+		console.log('Transaction receipt:', receipt);
+
+		return receipt;
 	} catch (error) {
-		console.error('Error creating project:', error);
-		throw new Error('Failed to create project');
+		console.error('Detailed error in createProject:', {
+			message: error.message,
+			code: error.code,
+			data: error.data,
+			transaction: error.transaction,
+			reason: error.reason,
+			method: error.method,
+			transaction: error.transaction,
+			receipt: error.receipt
+		});
+
+		if (error.code === 'CALL_EXCEPTION') {
+			throw new Error(`Contract call failed: ${error.reason || 'Unknown reason'}`);
+		} else if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
+			throw new Error('Failed to estimate gas. The transaction may revert.');
+		} else if (error.code === -32603) {
+			throw new Error('Internal JSON-RPC error. Check if you have enough gas and proper permissions.');
+		}
+
+		throw new Error(`Failed to create project: ${error.message}`);
 	}
 };
 
