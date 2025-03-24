@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 			console.log('Creating new user with role:', decodedRole);
 			const newUserResult = await db.query(
 				'INSERT INTO users (wallet_address, role, username) VALUES ($1, $2, $3) RETURNING *',
-				[walletAddress, decodedRole || 'donor', `User-${walletAddress.slice(0, 8)}`]
+				[walletAddress, decodedRole, `User-${walletAddress.slice(0, 8)}`]
 			);
 			user = newUserResult.rows[0];
 		} else {

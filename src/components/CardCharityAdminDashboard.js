@@ -6,7 +6,7 @@ const CardCharityAdminDashboard = ( { mockAmount } ) => {
 	const [explanation, setExplanation] = useState('');
 	const [loading, setLoading] = useState(false);
 	const fileInputRef = useRef(null);
-
+	
 	const renderScoreIcon = (score) => {
 		if (score >= 80) {
 			return <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -90,7 +90,7 @@ const CardCharityAdminDashboard = ( { mockAmount } ) => {
 						{loading ? (
 							<span className="loading loading-spinner loading-sm"></span>
 						) : (
-							'Upload Proposal'
+							'Request Transaction'
 						)}
 					</button>
 				</div>
