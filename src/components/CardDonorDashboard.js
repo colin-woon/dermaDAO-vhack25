@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { connectWallet, donate, getCurrentRoundId } from '@/services/blockchain';
 
 const CardDonorDashboard = ({ project }) => {
 	const [showDonateModal, setShowDonateModal] = useState(false);
 	const [donationAmount, setDonationAmount] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
 
 	const handleDonate = async (e) => {
 		e.preventDefault();
 		setLoading(true);
+		setError(null);
 		try {
 			const token = localStorage.getItem('authToken');
 			if (!token) {
@@ -19,6 +22,19 @@ const CardDonorDashboard = ({ project }) => {
 				throw new Error('Please enter a valid donation amount');
 			}
 
+			// Connect wallet and get signer
+			const { signer } = await connectWallet();
+
+			// Get current round ID from blockchain and convert BigInt to string
+			const currentRoundId = (await getCurrentRoundId()).toString();
+
+			// Convert amount to string with 2 decimal places for DermaCoin
+			const amountString = amount.toFixed(2);
+
+			// Make donation on blockchain
+			const receipt = await donate(signer, project.blockchain_id, amountString);
+
+			// Save donation to database
 			const response = await fetch('/api/donations', {
 				method: 'POST',
 				headers: {
@@ -27,12 +43,16 @@ const CardDonorDashboard = ({ project }) => {
 				},
 				body: JSON.stringify({
 					projectId: project.id,
-					amount: amount
+					amount: amount,
+					transactionHash: receipt.hash,
+					blockchainProjectId: project.blockchain_id,
+					currentRoundId: currentRoundId
 				})
 			});
 
 			if (!response.ok) {
-				throw new Error('Failed to process donation');
+				const errorData = await response.json();
+				throw new Error(errorData.error || 'Failed to save donation to database');
 			}
 
 			alert('Donation successful!');
@@ -40,7 +60,7 @@ const CardDonorDashboard = ({ project }) => {
 			setDonationAmount('');
 		} catch (error) {
 			console.error('Error making donation:', error);
-			alert('Error making donation: ' + error.message);
+			setError(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -55,8 +75,8 @@ const CardDonorDashboard = ({ project }) => {
 			</figure>
 			<div className="card-body">
 				<h2 className="card-title">{project.name}</h2>
-				<p>Goal Amount: {project.goal_amount} DRMA</p>
-				<p>Distributed Funds: {project.allocated_funds || 0} DRMA</p>
+				<p>Goal Amount: {project.goal_amount} DMC</p>
+				<p>Distributed Funds: {project.allocated_funds || 0} DMC</p>
 				<p>Description: {project.description}</p>
 				<div className="card-actions flex justify-between items-center w-full gap-1">
 					<button
@@ -81,10 +101,15 @@ const CardDonorDashboard = ({ project }) => {
 				<dialog className={`modal ${showDonateModal ? 'modal-open' : ''}`}>
 					<div className="modal-box bg-violet-950/90">
 						<h3 className="font-bold text-lg mb-4">Donate to Project</h3>
+						{error && (
+							<div className="alert alert-error mb-4">
+								<span>{error}</span>
+							</div>
+						)}
 						<form onSubmit={handleDonate}>
 							<div className="form-control">
 								<label className="label">
-									<span className="label-text">Amount (DRMA)</span>
+									<span className="label-text">Amount (DMC)</span>
 								</label>
 								<input
 									type="number"
@@ -101,7 +126,10 @@ const CardDonorDashboard = ({ project }) => {
 								<button
 									type="button"
 									className="btn btn-ghost"
-									onClick={() => setShowDonateModal(false)}
+									onClick={() => {
+										setShowDonateModal(false);
+										setError(null);
+									}}
 								>
 									Cancel
 								</button>
@@ -124,7 +152,10 @@ const CardDonorDashboard = ({ project }) => {
 						</form>
 					</div>
 					<form method="dialog" className="modal-backdrop">
-						<button onClick={() => setShowDonateModal(false)}>close</button>
+						<button onClick={() => {
+							setShowDonateModal(false);
+							setError(null);
+						}}>close</button>
 					</form>
 				</dialog>
 			</div>

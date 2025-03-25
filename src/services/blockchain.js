@@ -423,8 +423,8 @@ export const donate = async (signer, projectId, amount) => {
 	try {
 		const { dermaCoin: signedDermaCoin, charityPlatform: signedCharityPlatform } = getSignedContracts(signer);
 
-		// Convert amount from token units to wei
-		const amountWei = ethers.parseUnits(amount, 2); // Use 2 for DermaCoin decimals
+		// Convert amount from token units to wei (using 2 decimals for DermaCoin)
+		const amountWei = ethers.parseUnits(amount.toString(), 2);
 
 		// Approve tokens for the charity platform to spend
 		const approveTx = await signedDermaCoin.approve(CHARITY_PLATFORM_ADDRESS, amountWei);
@@ -432,7 +432,9 @@ export const donate = async (signer, projectId, amount) => {
 
 		// Make the donation
 		const donateTx = await signedCharityPlatform.donate(projectId, amountWei);
-		return await donateTx.wait();
+		const receipt = await donateTx.wait();
+
+		return receipt;
 	} catch (error) {
 		console.error('Error making donation:', error);
 		throw new Error('Failed to make donation');

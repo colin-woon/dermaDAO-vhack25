@@ -448,7 +448,7 @@ return (
     </div>
 
     <div>
-      <label className="block text-sm font-medium text-gray-300">Goal Amount (DRMA)</label>
+      <label className="block text-sm font-medium text-gray-300">Goal Amount (DMC)</label>
       <input
         type="number"
         step="0.01"
@@ -459,7 +459,7 @@ return (
         onChange={(e) => setProjectData({...projectData, goalAmount: e.target.value})}
         placeholder="0.00"
       />
-      <p className="mt-1 text-sm text-gray-400">Amount in DermaCoin (DRMA)</p>
+      <p className="mt-1 text-sm text-gray-400">Amount in DermaCoin (DMC)</p>
     </div>
 
     <div>

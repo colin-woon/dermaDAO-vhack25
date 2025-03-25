@@ -61,8 +61,8 @@ const CardCharityAdminDashboard = ({ project }) => {
 			</figure>
 			<div className="card-body">
 				<h2 className="card-title">{project.name}</h2>
-				<p>Goal Amount: {project.goal_amount} DRMA</p>
-				<p>Distributed Funds: {project.allocated_funds || 0} DRMA</p>
+				<p>Goal Amount: {project.goal_amount} DMC</p>
+				<p>Distributed Funds: {project.allocated_funds || 0} DMC</p>
 				<p>Description: {project.description}</p>
 				<div className="card-actions flex justify-between items-center w-full gap-1">
 					<input
