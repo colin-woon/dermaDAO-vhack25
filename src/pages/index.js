@@ -23,14 +23,13 @@ export default function Home() {
 		});
 	};
 
-	const handleCharityLogin = (charityId) => {
+	const handleCharityLogin = () => {
 		setAuthState({
 			isDonorAuthenticated: false,
 			isCharityAuthenticated: true,
-			userId: charityId
+			userId: null
 		});
 	};
-
 
 	const [dbStatus, setDbStatus] = useState({
 		isConnected: false,
@@ -62,48 +61,40 @@ export default function Home() {
 
 	return (
 		<AnimatePresence mode="wait">
-        {!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
-          <motion.div
-            key="landing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <LandingPage
-              onDonorAuthSuccess={handleDonorLogin}
-              onCharityAuthSuccess={handleCharityLogin}
-            />
-          </motion.div>
-        ) : authState.isDonorAuthenticated ? (
-          <motion.div
-            key="donor"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <DonorDashboard />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="charity"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <CharityAdminDashboard charityId={authState.userId} />
-          </motion.div>
-        )}
-      </AnimatePresence>
- 	);
+			{!authState.isDonorAuthenticated && !authState.isCharityAuthenticated ? (
+				<motion.div
+					key="landing"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.5 }}
+				>
+					<LandingPage
+						onDonorAuthSuccess={handleDonorLogin}
+						onCharityAuthSuccess={handleCharityLogin}
+					/>
+				</motion.div>
+			) : authState.isDonorAuthenticated ? (
+				<motion.div
+					key="donor"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.5 }}
+				>
+					<DonorDashboard />
+				</motion.div>
+			) : (
+				<motion.div
+					key="charity"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.5 }}
+				>
+					<CharityAdminDashboard />
+				</motion.div>
+			)}
+		</AnimatePresence>
+	);
 }
-
-{/* <div className={`db-status ${dbStatus.isConnected ? 'success' : 'error'}`}>
-	<p>{dbStatus.message}</p>
-</div> */}
-{/* <DonorDashboard /> */}
-{/* <BlockchainTest /> */}
-{/* <CharityAdminDashboard charityId={authState.userId} /> */}
-

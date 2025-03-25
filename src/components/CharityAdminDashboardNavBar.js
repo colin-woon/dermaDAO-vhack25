@@ -9,24 +9,24 @@ import {
 	getCharity
   } from '@/services/blockchain';
 
-const CharityAdminDashboardNavBar = () => {
+const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated }) => {
 	const [showCharityDialog, setShowCharityDialog] = useState(false);
-const [charityFormData, setCharityFormData] = useState({
-    name: '',
-    description: '',
-    additionalInfo: ''
-});
+	const [charityFormData, setCharityFormData] = useState({
+		name: '',
+		description: '',
+		additionalInfo: ''
+	});
 	const [walletAddress, setWalletAddress] = useState('');
-    const [isConnected, setIsConnected] = useState(false);
-    const [authToken, setAuthToken] = useState('');
-    const [showDialog, setShowDialog] = useState(false);
-    const [signer, setSigner] = useState(null);
+	const [isConnected, setIsConnected] = useState(false);
+	const [authToken, setAuthToken] = useState('');
+	const [showDialog, setShowDialog] = useState(false);
+	const [signer, setSigner] = useState(null);
 	const [projectData, setProjectData] = useState({
 		name: '',
 		description: '',
 		goalAmount: '',
 		documents: null,
-	  });
+	});
 	const [loading, setLoading] = useState(false);
 
 	const handleConnectWallet = async () => {
@@ -83,6 +83,8 @@ const [charityFormData, setCharityFormData] = useState({
 								setShowCharityDialog(true);
 							} else {
 								console.log('Charity validated successfully on blockchain');
+								// Notify parent that wallet is connected and charity is verified
+								onWalletConnected?.(userData.user.charity.id);
 							}
 						} catch (error) {
 							console.error('Error verifying charity on blockchain:', error);
@@ -90,6 +92,7 @@ const [charityFormData, setCharityFormData] = useState({
 							// we might want to handle this differently
 							if (userData.user.charity.is_verified) {
 								console.log('Charity is verified in database, proceeding despite blockchain error');
+								onWalletConnected?.(userData.user.charity.id);
 							} else {
 								console.log('Charity not verified, showing creation dialog');
 								setShowCharityDialog(true);
@@ -270,6 +273,7 @@ const handleCreateProject = async (e) => {
                 goalAmount: '',
                 documents: null
             });
+            onProjectCreated?.();
         } else {
             throw new Error(data.message || 'Failed to store project in database');
         }

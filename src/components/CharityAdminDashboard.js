@@ -1,34 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CharityAdminDashboardNavBar from './CharityAdminDashboardNavBar';
 import Footer from './Footer';
 import CardCharityAdminDashboard from './CardCharityAdminDashboard';
 import { FlickeringGrid } from './magicui/flickering-grid';
 
 const CharityAdminDashboard = () => {
-	return (
-		<div className="flex flex-col justify-between min-h-screen bg-gray-950">
-		 <div className="fixed inset-0 ">
-						<FlickeringGrid
-							color="rgb(80, 5, 255)"
-							maxOpacity={0.5}
-							className="w-full h-full"
-							squareSize={3}
-							gridGap={3}
-							flickerChance={0.7}
-						/>
-					</div>
-					<div className="relative z-10">
+	const [projects, setProjects] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
+	const [charityId, setCharityId] = useState(null);
 
-			<CharityAdminDashboardNavBar />
-			<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full mt-10 mb-10'>
-				<CardCharityAdminDashboard mockAmount={5000}/>
-				<CardCharityAdminDashboard mockAmount={3000}/>
-				<CardCharityAdminDashboard mockAmount={6000}/>
-				<CardCharityAdminDashboard mockAmount={8000}/>
-				<CardCharityAdminDashboard mockAmount={9000}/>
+	const fetchProjects = async () => {
+		if (!charityId) return;
+
+		setLoading(true);
+		setError(null);
+		try {
+			const response = await fetch(`/api/projects?charityId=${charityId}`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch projects');
+			}
+			const data = await response.json();
+			setProjects(Array.isArray(data) ? data : data.data || []);
+		} catch (err) {
+			setError(err.message);
+			setProjects([]);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		if (charityId) {
+			fetchProjects();
+		}
+	}, [charityId]);
+
+	const handleWalletConnected = (id) => {
+		setCharityId(id);
+	};
+
+	const handleProjectCreated = () => {
+		fetchProjects();
+	};
+
+	return (
+		<div className="flex flex-col min-h-screen bg-gray-950">
+			<div className="fixed inset-0">
+				<FlickeringGrid
+					color="rgb(80, 5, 255)"
+					maxOpacity={0.5}
+					className="w-full h-full"
+					squareSize={3}
+					gridGap={3}
+					flickerChance={0.7}
+				/>
 			</div>
-			<Footer />
-					</div>
+			<div className="relative z-10 flex flex-col flex-grow">
+				<CharityAdminDashboardNavBar
+					onWalletConnected={handleWalletConnected}
+					onProjectCreated={handleProjectCreated}
+				/>
+				<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full mt-10 mb-10 flex-grow'>
+					{loading ? (
+						<div className="flex items-center justify-center w-full">
+							<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
+						</div>
+					) : error ? (
+						<div className="text-red-500 text-center w-full">{error}</div>
+					) : !projects || projects.length === 0 ? (
+						<div className="text-gray-400 text-center w-full">No projects found</div>
+					) : (
+						projects.map((project) => (
+							<CardCharityAdminDashboard key={project.id} project={project} />
+						))
+					)}
+				</div>
+				<Footer />
+			</div>
 		</div>
 	);
 };

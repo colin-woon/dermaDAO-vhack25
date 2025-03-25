@@ -1,12 +1,12 @@
 import { useState, useRef } from 'react';
 
-const CardCharityAdminDashboard = ( { mockAmount } ) => {
+const CardCharityAdminDashboard = ({ project }) => {
 	const [isResultModalOpen, setIsResultModalOpen] = useState(false);
 	const [score, setScore] = useState(null);
 	const [explanation, setExplanation] = useState('');
 	const [loading, setLoading] = useState(false);
 	const fileInputRef = useRef(null);
-	
+
 	const renderScoreIcon = (score) => {
 		if (score >= 80) {
 			return <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
@@ -60,10 +60,10 @@ const CardCharityAdminDashboard = ( { mockAmount } ) => {
 					alt="Project" />
 			</figure>
 			<div className="card-body">
-				<h2 className="card-title">Project Name</h2>
-				<p>Estimated amount: {mockAmount}/10000 USDC</p>
-				<p>Distributed Funds: </p>
-				<p>Description: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+				<h2 className="card-title">{project.name}</h2>
+				<p>Goal Amount: {project.goal_amount} DRMA</p>
+				<p>Distributed Funds: {project.allocated_funds || 0} DRMA</p>
+				<p>Description: {project.description}</p>
 				<div className="card-actions flex justify-between items-center w-full gap-1">
 					<input
 						type="file"
@@ -105,24 +105,6 @@ const CardCharityAdminDashboard = ( { mockAmount } ) => {
 								{renderScoreIcon(score)}
 							</div>
 							<p className="text-sm opacity-90">{explanation}</p>
-
-							{/* Additional actions for successful proposals
-							{score >= 80 && (
-								<div className="mt-4 border-t border-violet-800 pt-4">
-									<h4 className="font-semibold mb-2">Next Steps:</h4>
-									<div className="space-y-2">
-										<button className="btn btn-success btn-sm w-full">
-											Submit for Final Review
-										</button>
-										<button className="btn btn-primary btn-sm w-full">
-											Generate Smart Contract
-										</button>
-										<button className="btn btn-info btn-sm w-full">
-											Schedule Presentation
-										</button>
-									</div>
-								</div>
-							)} */}
 						</div>
 						<div className="modal-action">
 							<button

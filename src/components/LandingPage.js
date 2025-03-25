@@ -37,7 +37,6 @@ const LandingPage = ({ onDonorAuthSuccess, onCharityAuthSuccess }) => {
 							<WorldcoinLogin onAuthSuccess={onDonorAuthSuccess} />
 							<button className="btn btn-primary" onClick={onDonorAuthSuccess}>TEST: LOGIN AS DONOR</button>
 							<CharityLoginButton onLoginSuccess={handleCharityLoginSuccess} />
-							<button className="btn btn-secondary" onClick={() => handleCharityLoginSuccess(1)}>TEST: LOGIN AS CHARITY</button>
 						</div>
 					</div>
 				</div>
