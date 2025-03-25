@@ -56,26 +56,28 @@ const CharityAdminDashboard = () => {
 					flickerChance={0.7}
 				/>
 			</div>
-			<div className="relative z-10 flex flex-col flex-grow">
+			<div className="relative z-10 flex flex-col min-h-screen">
 				<CharityAdminDashboardNavBar
 					onWalletConnected={handleWalletConnected}
 					onProjectCreated={handleProjectCreated}
 				/>
-				<div className='flex flex-row flex-wrap justify-evenly gap-8 w-full mt-10 mb-10 flex-grow'>
-					{loading ? (
-						<div className="flex items-center justify-center w-full">
-							<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
-						</div>
-					) : error ? (
-						<div className="text-red-500 text-center w-full">{error}</div>
-					) : !projects || projects.length === 0 ? (
-						<div className="text-gray-400 text-center w-full">No projects found</div>
-					) : (
-						projects.map((project) => (
-							<CardCharityAdminDashboard key={project.id} project={project} />
-						))
-					)}
-				</div>
+				<main className='flex-1 overflow-auto p-8'>
+					<div className='grid grid-cols-3 gap-8 max-w-[1800px] mx-auto'>
+						{loading ? (
+							<div className="flex items-center justify-center w-full col-span-3">
+								<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
+							</div>
+						) : error ? (
+							<div className="text-red-500 text-center w-full col-span-3">{error}</div>
+						) : !projects || projects.length === 0 ? (
+							<div className="text-gray-400 text-center w-full col-span-3">No projects found</div>
+						) : (
+							projects.map((project) => (
+								<CardCharityAdminDashboard key={project.id} project={project} />
+							))
+						)}
+					</div>
+				</main>
 				<Footer />
 			</div>
 		</div>

@@ -101,31 +101,35 @@ const CardDonorDashboard = ({ project }) => {
 	};
 
 	return (
-		<div className="card bg-purple-950/90 w-1/4 shadow-sm rounded-3xl">
-			<figure>
+		<div className="card bg-purple-950/90 w-full h-[500px] shadow-lg rounded-3xl">
+			<figure className="h-64">
 				<img
 					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-					alt="Project" />
+					alt="Project"
+					className="w-full h-full object-cover"
+				/>
 			</figure>
 			<div className="card-body">
-				<h2 className="card-title">{project.name}</h2>
-				<p>Goal Amount: {project.goal_amount} DMC</p>
-				<p>Distributed Funds: {project.allocated_funds || 0} DMC</p>
-				<p>Description: {project.description}</p>
-				<div className="card-actions flex justify-between items-center w-full gap-1">
+				<h2 className="card-title text-2xl">{project.name}</h2>
+				<div className="space-y-2 flex-grow">
+					<p className="text-lg">Goal Amount: <span className="text-violet-400">{project.goal_amount} DMC</span></p>
+					<p className="text-lg">Distributed Funds: <span className="text-green-400">{project.allocated_funds || 0} DMC</span></p>
+					<p className="text-gray-300">{project.description}</p>
+				</div>
+				<div className="card-actions flex justify-between items-center w-full gap-1 mt-4">
 					<button
-						className="btn btn-accent btn-sm w-[32%] text-xs"
+						className="btn btn-accent btn-sm w-[32%]"
 						onClick={() => setIsTransactionHistoryModalOpen(true)}
 					>
 						Transactions
 					</button>
 					<button
-						className="btn btn-secondary btn-sm w-[32%] text-xs"
+						className="btn btn-secondary btn-sm w-[32%]"
 					>
 						Proposals
 					</button>
 					<button
-						className="btn btn-primary btn-sm w-[32%] text-xs"
+						className="btn btn-primary btn-sm w-[32%]"
 						onClick={() => setShowDonateModal(true)}
 					>
 						Donate

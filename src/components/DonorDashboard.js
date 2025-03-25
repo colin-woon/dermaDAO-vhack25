@@ -36,7 +36,7 @@ const DonorDashboard = () => {
     }, []);
 
     return (
-        <div className='relative flex flex-col justify-between min-h-screen bg-gray-950'>
+        <div className='relative flex flex-col min-h-screen bg-gray-950'>
             <div className="fixed inset-0">
                 <FlickeringGrid
                     color="rgb(80, 5, 255)"
@@ -47,19 +47,19 @@ const DonorDashboard = () => {
                     flickerChance={0.7}
                 />
             </div>
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col min-h-screen">
                 <DonorDashboardNavBar activeTab={activeTab} onTabChange={setActiveTab} />
-                <div className='flex flex-col justify-around min-h-screen p-10'>
+                <main className='flex-1 overflow-auto p-8'>
                     {activeTab === 'projects' ? (
-                        <div className='flex flex-row flex-wrap justify-evenly gap-8 w-full'>
+                        <div className='grid grid-cols-3 gap-8 max-w-[1800px] mx-auto'>
                             {loading ? (
-                                <div className="flex items-center justify-center w-full">
+                                <div className="flex items-center justify-center w-full col-span-3">
                                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
                                 </div>
                             ) : error ? (
-                                <div className="text-red-500 text-center w-full">{error}</div>
+                                <div className="text-red-500 text-center w-full col-span-3">{error}</div>
                             ) : !projects || projects.length === 0 ? (
-                                <div className="text-gray-400 text-center w-full">No projects found</div>
+                                <div className="text-gray-400 text-center w-full col-span-3">No projects found</div>
                             ) : (
                                 projects.map((project) => (
                                     <CardDonorDashboard key={project.id} project={project} />
@@ -69,7 +69,7 @@ const DonorDashboard = () => {
                     ) : (
                         <PendingProposals />
                     )}
-                </div>
+                </main>
                 <Footer />
             </div>
         </div>
