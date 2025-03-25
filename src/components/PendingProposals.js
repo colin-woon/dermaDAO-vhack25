@@ -163,57 +163,79 @@ const PendingProposals = () => {
             {/* Scoring Modal */}
             {showScoringModal && selectedProposal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-gray-950 p-6 rounded-lg w-full max-w-md">
-                        <h3 className="text-xl font-bold mb-4">Score Proposal: {selectedProposal.projectName}</h3>
-                        <form onSubmit={handleScoreSubmit} className="space-y-4">
-                            {Object.entries(scores).map(([criterion, score]) => (
-                                <div key={criterion}>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        {criterion.charAt(0).toUpperCase() + criterion.slice(1)} Score (0-100)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        required
-                                        className="block w-full rounded-md border-gray-600 bg-gray-800 text-white"
-                                        value={score}
-                                        onChange={(e) => setScores(prev => ({
-                                            ...prev,
-                                            [criterion]: parseInt(e.target.value) || 0
-                                        }))}
-                                    />
-                                </div>
-                            ))}
-
-                            <div className="flex justify-end space-x-3 pt-4">
-                                <button
-                                    type="button"
-                                    className="btn btn-ghost"
-                                    onClick={() => {
-                                        setShowScoringModal(false);
-                                        setSelectedProposal(null);
-                                    }}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    disabled={loading}
-                                >
-                                    {loading ? (
-                                        <span className="flex items-center">
-                                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            Submitting...
-                                        </span>
-                                    ) : 'Submit Score'}
-                                </button>
-                            </div>
-                        </form>
+                    <div className="bg-gray-950 p-6 rounded-lg w-full max-w-md max-h-[90vh] flex flex-col">
+                        <h3 className="text-xl font-bold mb-4 sticky top-0 bg-gray-950 py-2 z-10 border-b border-gray-800">
+                            Score Proposal: {selectedProposal.projectName}
+                        </h3>
+                        <div className="overflow-y-auto flex-1 pr-2">
+                            <form onSubmit={handleScoreSubmit} className="space-y-6">
+                                {Object.entries(scores).map(([criterion, score]) => (
+                                    <div key={criterion} className="space-y-2">
+                                        <label className="block text-sm font-medium text-gray-300">
+                                            {criterion.charAt(0).toUpperCase() + criterion.slice(1)} Score
+                                        </label>
+                                        <div className="w-full">
+                                            <input
+                                                type="range"
+                                                min={1}
+                                                max={5}
+                                                value={Math.max(1, Math.round(score / 20))} // Convert 0-100 to 1-5
+                                                className="range range-primary w-full"
+                                                step="1"
+                                                onChange={(e) => setScores(prev => ({
+                                                    ...prev,
+                                                    [criterion]: parseInt(e.target.value) * 20 // Convert back to 0-100
+                                                }))}
+                                            />
+                                            <div className="flex justify-between px-2.5 mt-2 text-xs">
+                                                <span>|</span>
+                                                <span>|</span>
+                                                <span>|</span>
+                                                <span>|</span>
+                                                <span>|</span>
+                                            </div>
+                                            <div className="flex justify-between px-2.5 mt-2 text-xs">
+                                                <span>1</span>
+                                                <span>2</span>
+                                                <span>3</span>
+                                                <span>4</span>
+                                                <span>5</span>
+                                            </div>
+                                            <div className="text-center mt-2 text-sm text-gray-400">
+                                                Score: {Math.round(score / 20)} out of 5
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </form>
+                        </div>
+                        <div className="pt-4 bg-gray-950 mt-4 border-t border-gray-800 flex justify-end space-x-3">
+                            <button
+                                type="button"
+                                className="btn btn-ghost"
+                                onClick={() => {
+                                    setShowScoringModal(false);
+                                    setSelectedProposal(null);
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleScoreSubmit}
+                                className="btn btn-primary"
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <span className="flex items-center">
+                                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Submitting...
+                                    </span>
+                                ) : 'Submit Score'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

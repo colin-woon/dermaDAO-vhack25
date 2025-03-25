@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import {
+	Tabs,
+	TabsList,
+	TabsTrigger,
+} from "@/components/ui/tabs"
 
-const DonorDashboardNavBar = () => {
+const DonorDashboardNavBar = ({ activeTab, onTabChange }) => {
 	const [walletAddress, setWalletAddress] = useState('');
 	const [isConnected, setIsConnected] = useState(false);
 	const [authToken, setAuthToken] = useState('');
@@ -82,7 +87,13 @@ const DonorDashboardNavBar = () => {
 					<span className="text-xl">DermaDAO</span>
 				</a>
 			</div>
-			<div className="navbar-center hidden lg:flex">
+			<div className="navbar-center">
+				<Tabs value={activeTab} onValueChange={onTabChange} className="w-[400px]">
+					<TabsList className="grid w-full grid-cols-2">
+						<TabsTrigger value="projects">Active Projects</TabsTrigger>
+						<TabsTrigger value="proposals">Pending Proposals</TabsTrigger>
+					</TabsList>
+				</Tabs>
 			</div>
 			<div className="navbar-end">
 				<button

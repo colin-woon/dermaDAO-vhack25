@@ -5,12 +5,13 @@ import CardDonorDashboard from './CardDonorDashboard';
 import PendingProposals from './PendingProposals';
 import { useState, useEffect } from 'react';
 import { FlickeringGrid } from './magicui/flickering-grid';
+import { TabsContent } from "@/components/ui/tabs"
 
 const DonorDashboard = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('projects'); // 'projects' or 'proposals'
+    const [activeTab, setActiveTab] = useState('projects');
 
     const fetchProjects = async () => {
         setLoading(true);
@@ -47,25 +48,8 @@ const DonorDashboard = () => {
                 />
             </div>
             <div className="relative z-10">
-                <DonorDashboardNavBar />
-                <div className='flex flex-col justify-around min-h-screen p-10 space-y-12'>
-                    {/* Tab Navigation */}
-                    <div className="tabs tabs-boxed justify-center bg-transparent gap-2">
-                        <button
-                            className={`tab ${activeTab === 'projects' ? 'tab-active' : ''}`}
-                            onClick={() => setActiveTab('projects')}
-                        >
-                            Active Projects
-                        </button>
-                        <button
-                            className={`tab ${activeTab === 'proposals' ? 'tab-active' : ''}`}
-                            onClick={() => setActiveTab('proposals')}
-                        >
-                            Pending Proposals
-                        </button>
-                    </div>
-
-                    {/* Content based on active tab */}
+                <DonorDashboardNavBar activeTab={activeTab} onTabChange={setActiveTab} />
+                <div className='flex flex-col justify-around min-h-screen p-10'>
                     {activeTab === 'projects' ? (
                         <div className='flex flex-row flex-wrap justify-evenly gap-8 w-full'>
                             {loading ? (

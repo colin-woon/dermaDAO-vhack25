@@ -398,8 +398,8 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated }) =>
 		</div>
 		 {showDialog && (
 			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-			  <div className="bg-gray-950 p-6 rounded-lg w-full max-w-2xl">
-				<h2 className="text-2xl font-bold mb-6">Create New Project</h2>
+			  <div className="bg-gray-950 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+				<h2 className="text-2xl font-bold mb-6 sticky top-0 bg-gray-950 py-2 z-10">Create New Project</h2>
 				<form onSubmit={handleCreateProject} className="space-y-6">
 					{/* Basic Project Info */}
 					<div className="space-y-4">
