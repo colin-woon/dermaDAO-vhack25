@@ -8,8 +8,9 @@ import {
 	registerCharity,
 	getCharity
   } from '@/services/blockchain';
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated }) => {
+const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated, activeTab, onTabChange }) => {
 	const [showCharityDialog, setShowCharityDialog] = useState(false);
 	const [showDialog, setShowDialog] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -362,32 +363,31 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated }) =>
 
 	return (
 		<>
-		<div className="navbar bg-violet-950/80 shadow-sm">
+		<div className="navbar bg-purple-950/90 p-4">
 			<div className="navbar-start">
-				<div className="dropdown">
-					<div tabIndex="0" role="button" className="btn btn-ghost lg:hidden">
-						<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
-						</svg>
-					</div>
-				</div>
-				<a className="btn btn-ghost normal-case flex items-center gap-1">
+				<a className="btn btn-ghost normal-case text-xl flex items-center gap-1">
 					<img src="/dermaDAOlogo.png" alt="DermaDAO Logo" className="h-10 w-10 -mr-2" />
-					<span className="text-xl">DermaDAO</span>
+					<span>DermaDAO</span>
 				</a>
 			</div>
-			<div className="navbar-center hidden lg:flex">
+			<div className="navbar-center">
+				<Tabs value={activeTab} onValueChange={onTabChange}>
+					<TabsList className="bg-purple-900/50">
+						<TabsTrigger value="projects">Active Projects</TabsTrigger>
+						<TabsTrigger value="pending">Pending Projects</TabsTrigger>
+					</TabsList>
+				</Tabs>
 			</div>
-			<div className="navbar-end">
-			<button
-                className="btn btn-accent"
-                onClick={() => setShowDialog(true)}
-                disabled={!isConnected || showCharityDialog}
-            >
-                Create Project
-            </button>
+			<div className="navbar-end space-x-4">
 				<button
-					className="btn btn-primary ml-2"
+					className="btn btn-accent"
+					onClick={() => setShowDialog(true)}
+					disabled={!isConnected || showCharityDialog}
+				>
+					Create Project
+				</button>
+				<button
+					className="btn btn-primary"
 					onClick={handleConnectWallet}
 				>
 					{isConnected ?
@@ -396,215 +396,219 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated }) =>
 				</button>
 			</div>
 		</div>
-		 {showDialog && (
+
+		{showDialog && (
 			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-			  <div className="bg-gray-950 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-				<h2 className="text-2xl font-bold mb-6 sticky top-0 bg-gray-950 py-2 z-10">Create New Project</h2>
-				<form onSubmit={handleCreateProject} className="space-y-6">
-					{/* Basic Project Info */}
-					<div className="space-y-4">
-						<div>
-							<label className="block text-sm font-medium text-gray-300">Project Name</label>
-							<input
-								type="text"
-								required
-								className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-								value={projectData.name}
-								onChange={(e) => setProjectData({...projectData, name: e.target.value})}
-								placeholder="Enter project name"
-							/>
-						</div>
+				<div className="bg-gray-950 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
+					<h2 className="text-2xl font-bold mb-6 sticky top-0 bg-gray-950 py-2 z-10 border-b border-gray-800">Create New Project</h2>
+					<div className="overflow-y-auto flex-1 pr-2">
+						<form onSubmit={handleCreateProject} className="space-y-6">
+							{/* Basic Project Info */}
+							<div className="space-y-4">
+								<div>
+									<label className="block text-sm font-medium text-gray-300">Project Name</label>
+									<input
+										type="text"
+										required
+										className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+										value={projectData.name}
+										onChange={(e) => setProjectData({...projectData, name: e.target.value})}
+										placeholder="Enter project name"
+									/>
+								</div>
 
-						<div>
-							<label className="block text-sm font-medium text-gray-300">Description</label>
-							<textarea
-								required
-								className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-								rows="3"
-								value={projectData.description}
-								onChange={(e) => setProjectData({...projectData, description: e.target.value})}
-								placeholder="Brief description of your project"
-							/>
-						</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-300">Description</label>
+									<textarea
+										required
+										className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+										rows="3"
+										value={projectData.description}
+										onChange={(e) => setProjectData({...projectData, description: e.target.value})}
+										placeholder="Brief description of your project"
+									/>
+								</div>
 
-						<div>
-							<label className="block text-sm font-medium text-gray-300">Goal Amount (DMC)</label>
-							<input
-								type="number"
-								step="0.01"
-								min="0"
-								required
-								className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-								value={projectData.goalAmount}
-								onChange={(e) => setProjectData({...projectData, goalAmount: e.target.value})}
-								placeholder="0.00"
-							/>
-							<p className="mt-1 text-sm text-gray-400">Amount in DermaCoin (DMC)</p>
-						</div>
+								<div>
+									<label className="block text-sm font-medium text-gray-300">Goal Amount (DMC)</label>
+									<input
+										type="number"
+										step="0.01"
+										min="0"
+										required
+										className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+										value={projectData.goalAmount}
+										onChange={(e) => setProjectData({...projectData, goalAmount: e.target.value})}
+										placeholder="0.00"
+									/>
+									<p className="mt-1 text-sm text-gray-400">Amount in DermaCoin (DMC)</p>
+								</div>
+							</div>
+
+							{/* Project Proposal */}
+							<div className="border-t border-gray-700 pt-6">
+								<h3 className="text-lg font-semibold mb-4">Project Proposal</h3>
+								<div className="space-y-4">
+									<div>
+										<label className="block text-sm font-medium text-gray-300">Impact & Significance</label>
+										<textarea
+											required
+											className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+											rows="3"
+											value={projectData.proposal.impact}
+											onChange={(e) => setProjectData({
+												...projectData,
+												proposal: {...projectData.proposal, impact: e.target.value}
+											})}
+											placeholder="Describe the expected impact and significance of your project"
+										/>
+									</div>
+
+									<div>
+										<label className="block text-sm font-medium text-gray-300">Methodology & Approach</label>
+										<textarea
+											required
+											className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+											rows="3"
+											value={projectData.proposal.methodology}
+											onChange={(e) => setProjectData({
+												...projectData,
+												proposal: {...projectData.proposal, methodology: e.target.value}
+											})}
+											placeholder="Explain your methodology and approach"
+										/>
+									</div>
+
+									<div>
+										<label className="block text-sm font-medium text-gray-300">Sustainability & Long-term Impact</label>
+										<textarea
+											required
+											className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+											rows="3"
+											value={projectData.proposal.sustainability}
+											onChange={(e) => setProjectData({
+												...projectData,
+												proposal: {...projectData.proposal, sustainability: e.target.value}
+											})}
+											placeholder="Describe how the project will maintain long-term impact"
+										/>
+									</div>
+
+									<div>
+										<label className="block text-sm font-medium text-gray-300">Budget Breakdown</label>
+										<textarea
+											required
+											className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+											rows="3"
+											value={projectData.proposal.budget_breakdown}
+											onChange={(e) => setProjectData({
+												...projectData,
+												proposal: {...projectData.proposal, budget_breakdown: e.target.value}
+											})}
+											placeholder="Provide a detailed breakdown of how funds will be used"
+										/>
+									</div>
+
+									<div>
+										<label className="block text-sm font-medium text-gray-300">Timeline & Milestones</label>
+										<textarea
+											required
+											className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+											rows="3"
+											value={projectData.proposal.timeline}
+											onChange={(e) => setProjectData({
+												...projectData,
+												proposal: {...projectData.proposal, timeline: e.target.value}
+											})}
+											placeholder="Outline project timeline and key milestones"
+										/>
+									</div>
+								</div>
+							</div>
+
+							{proposalScore && (
+								<div className={`p-4 rounded-lg ${proposalScore >= 80 ? 'bg-green-900/50' : 'bg-yellow-900/50'}`}>
+									<h4 className="font-semibold mb-2">AI Evaluation Score: {proposalScore}/100</h4>
+									<pre className="whitespace-pre-wrap text-sm">{proposalFeedback}</pre>
+								</div>
+							)}
+
+							<div className="flex justify-end space-x-3 pt-6">
+								<button
+									type="button"
+									className="btn btn-ghost"
+									onClick={() => setShowDialog(false)}
+								>
+									Cancel
+								</button>
+								<button
+									type="submit"
+									className="btn btn-primary"
+									disabled={loading}
+								>
+									{loading ? (
+										<span className="flex items-center">
+											<svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+											{proposalScore ? 'Submitting Proposal...' : 'Evaluating Proposal...'}
+										</span>
+									) : 'Submit Proposal'}
+								</button>
+							</div>
+						</form>
 					</div>
+				</div>
+			</div>
+		)}
 
-					{/* Project Proposal */}
-					<div className="border-t border-gray-700 pt-6">
-						<h3 className="text-lg font-semibold mb-4">Project Proposal</h3>
+		{showCharityDialog && (
+			<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+				<div className="bg-gray-950 p-6 rounded-lg w-full max-w-md">
+					<h2 className="text-xl font-bold mb-4">Register Your Charity</h2>
+					<p className="text-sm text-gray-400 mb-4">You need to register your charity before you can create projects.</p>
+					<form onSubmit={handleCreateCharity}>
 						<div className="space-y-4">
 							<div>
-								<label className="block text-sm font-medium text-gray-300">Impact & Significance</label>
-								<textarea
+								<label className="block text-sm font-medium text-gray-300">Charity Name</label>
+								<input
+									type="text"
 									required
 									className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-									rows="3"
-									value={projectData.proposal.impact}
-									onChange={(e) => setProjectData({
-										...projectData,
-										proposal: {...projectData.proposal, impact: e.target.value}
-									})}
-									placeholder="Describe the expected impact and significance of your project"
+									value={charityFormData.name}
+									onChange={(e) => setCharityFormData({...charityFormData, name: e.target.value})}
+									placeholder="Enter charity name"
 								/>
 							</div>
 
 							<div>
-								<label className="block text-sm font-medium text-gray-300">Methodology & Approach</label>
+								<label className="block text-sm font-medium text-gray-300">Description</label>
 								<textarea
 									required
 									className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
 									rows="3"
-									value={projectData.proposal.methodology}
-									onChange={(e) => setProjectData({
-										...projectData,
-										proposal: {...projectData.proposal, methodology: e.target.value}
-									})}
-									placeholder="Explain your methodology and approach"
-								/>
-							</div>
-
-							<div>
-								<label className="block text-sm font-medium text-gray-300">Sustainability & Long-term Impact</label>
-								<textarea
-									required
-									className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-									rows="3"
-									value={projectData.proposal.sustainability}
-									onChange={(e) => setProjectData({
-										...projectData,
-										proposal: {...projectData.proposal, sustainability: e.target.value}
-									})}
-									placeholder="Describe how the project will maintain long-term impact"
-								/>
-							</div>
-
-							<div>
-								<label className="block text-sm font-medium text-gray-300">Budget Breakdown</label>
-								<textarea
-									required
-									className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-									rows="3"
-									value={projectData.proposal.budget_breakdown}
-									onChange={(e) => setProjectData({
-										...projectData,
-										proposal: {...projectData.proposal, budget_breakdown: e.target.value}
-									})}
-									placeholder="Provide a detailed breakdown of how funds will be used"
-								/>
-							</div>
-
-							<div>
-								<label className="block text-sm font-medium text-gray-300">Timeline & Milestones</label>
-								<textarea
-									required
-									className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-									rows="3"
-									value={projectData.proposal.timeline}
-									onChange={(e) => setProjectData({
-										...projectData,
-										proposal: {...projectData.proposal, timeline: e.target.value}
-									})}
-									placeholder="Outline project timeline and key milestones"
+									value={charityFormData.description}
+									onChange={(e) => setCharityFormData({...charityFormData, description: e.target.value})}
+									placeholder="Describe your charity's mission"
 								/>
 							</div>
 						</div>
-					</div>
 
-					{proposalScore && (
-						<div className={`p-4 rounded-lg ${proposalScore >= 80 ? 'bg-green-900/50' : 'bg-yellow-900/50'}`}>
-							<h4 className="font-semibold mb-2">AI Evaluation Score: {proposalScore}/100</h4>
-							<pre className="whitespace-pre-wrap text-sm">{proposalFeedback}</pre>
+						<div className="mt-6 flex justify-end">
+							<button
+								type="submit"
+								className="btn btn-primary w-full"
+								disabled={loading}
+							>
+								{loading ? 'Registering...' : 'Register Charity'}
+							</button>
 						</div>
-					)}
-
-					<div className="flex justify-end space-x-3 pt-6">
-						<button
-							type="button"
-							className="btn btn-ghost"
-							onClick={() => setShowDialog(false)}
-						>
-							Cancel
-						</button>
-						<button
-							type="submit"
-							className="btn btn-primary"
-							disabled={loading}
-						>
-							{loading ? (
-								<span className="flex items-center">
-									<svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-										<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-										<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-									</svg>
-									{proposalScore ? 'Submitting Proposal...' : 'Evaluating Proposal...'}
-								</span>
-							) : 'Submit Proposal'}
-						</button>
-					</div>
-				</form>
-			  </div>
+					</form>
+				</div>
 			</div>
-		  )}
-		  {showCharityDialog && (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-gray-950 p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Register Your Charity</h2>
-            <p className="text-sm text-gray-400 mb-4">You need to register your charity before you can create projects.</p>
-            <form onSubmit={handleCreateCharity}>
-                <div className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300">Charity Name</label>
-                        <input
-                            type="text"
-                            required
-                            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-                            value={charityFormData.name}
-                            onChange={(e) => setCharityFormData({...charityFormData, name: e.target.value})}
-                            placeholder="Enter charity name"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300">Description</label>
-                        <textarea
-                            required
-                            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
-                            rows="3"
-                            value={charityFormData.description}
-                            onChange={(e) => setCharityFormData({...charityFormData, description: e.target.value})}
-                            placeholder="Describe your charity's mission"
-                        />
-                    </div>
-                </div>
-
-                <div className="mt-6 flex justify-end">
-                    <button
-                        type="submit"
-                        className="btn btn-primary w-full"
-                        disabled={loading}
-                    >
-                        {loading ? 'Registering...' : 'Register Charity'}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-)}
-		  </>
+		)}
+		</>
 	);
 }
 

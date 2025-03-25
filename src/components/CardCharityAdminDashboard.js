@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
 
-const CardCharityAdminDashboard = ({ project }) => {
+const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 	const [isResultModalOpen, setIsResultModalOpen] = useState(false);
 	const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
 	const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
+	const [showClaimModal, setShowClaimModal] = useState(false);
+	const [showEditModal, setShowEditModal] = useState(false);
 	const [score, setScore] = useState(null);
 	const [explanation, setExplanation] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -91,6 +93,55 @@ const CardCharityAdminDashboard = ({ project }) => {
 		);
 	};
 
+	const renderActionButtons = () => {
+		if (isPending) {
+			return (
+				<div className="card-actions flex justify-between items-center w-full gap-1 mt-4">
+					<button
+						className="btn btn-accent btn-sm w-[48%]"
+						onClick={() => setIsTransactionHistoryModalOpen(true)}
+					>
+						View Details
+					</button>
+					<button
+						className="btn btn-primary btn-sm w-[48%]"
+						onClick={() => setShowEditModal(true)}
+					>
+						Edit Proposal
+					</button>
+				</div>
+			);
+		}
+
+		return (
+			<div className="card-actions flex justify-between items-center w-full gap-1 mt-4">
+				<button
+					className="btn btn-accent btn-sm w-[32%]"
+					onClick={() => setIsTransactionHistoryModalOpen(true)}
+				>
+					Transactions
+				</button>
+				<button
+					className="btn btn-secondary btn-sm w-[32%]"
+					onClick={() => fileInputRef.current.click()}
+					disabled={loading}
+				>
+					{loading ? (
+						<span className="loading loading-spinner loading-sm"></span>
+					) : (
+						'Request Transaction'
+					)}
+				</button>
+				<button
+					className="btn btn-primary btn-sm w-[32%]"
+					onClick={() => setShowEditModal(true)}
+				>
+					Status
+				</button>
+			</div>
+		);
+	};
+
 	return (
 		<div className="card bg-purple-950/90 w-full h-[500px] shadow-lg rounded-3xl">
 			<figure className="h-64">
@@ -101,32 +152,20 @@ const CardCharityAdminDashboard = ({ project }) => {
 				/>
 			</figure>
 			<div className="card-body">
-				<h2 className="card-title text-2xl">{project.name}</h2>
+				<div className="flex justify-between items-start">
+					<h2 className="card-title text-2xl">{project.name}</h2>
+					{isPending && (
+						<span className="badge badge-warning">Pending Approval</span>
+					)}
+				</div>
 				<div className="space-y-2 flex-grow">
 					<p className="text-lg">Goal Amount: <span className="text-violet-400">{project.goal_amount} DMC</span></p>
-					<p className="text-lg">Distributed Funds: <span className="text-green-400">{project.allocated_funds || 0} DMC</span></p>
+					{!isPending && (
+						<p className="text-lg">Distributed Funds: <span className="text-green-400">{project.allocated_funds || 0} DMC</span></p>
+					)}
 					<p className="text-gray-300">{project.description}</p>
 				</div>
-				<div className="card-actions flex justify-between items-center w-full gap-1 mt-4">
-					<button
-						className="btn btn-accent btn-sm w-[32%]"
-						onClick={() => setIsTransactionHistoryModalOpen(true)}
-					>
-						Transactions
-					</button>
-					<button
-						className="btn btn-secondary btn-sm w-[32%]"
-						onClick={() => setShowClaimModal(true)}
-					>
-						Claim
-					</button>
-					<button
-						className="btn btn-primary btn-sm w-[32%]"
-						onClick={() => setShowEditModal(true)}
-					>
-						Edit
-					</button>
-				</div>
+				{renderActionButtons()}
 			</div>
 
 			{/* Results Dialog */}

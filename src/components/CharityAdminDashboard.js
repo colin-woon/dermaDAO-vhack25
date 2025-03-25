@@ -6,9 +6,11 @@ import { FlickeringGrid } from './magicui/flickering-grid';
 
 const CharityAdminDashboard = () => {
 	const [projects, setProjects] = useState([]);
+	const [pendingProjects, setPendingProjects] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [charityId, setCharityId] = useState(null);
+	const [activeTab, setActiveTab] = useState('projects');
 
 	const fetchProjects = async () => {
 		if (!charityId) return;
@@ -16,15 +18,25 @@ const CharityAdminDashboard = () => {
 		setLoading(true);
 		setError(null);
 		try {
-			const response = await fetch(`/api/projects?charityId=${charityId}`);
-			if (!response.ok) {
-				throw new Error('Failed to fetch projects');
+			// Fetch active projects
+			const activeResponse = await fetch(`/api/projects?charityId=${charityId}&status=active`);
+			if (!activeResponse.ok) {
+				throw new Error('Failed to fetch active projects');
 			}
-			const data = await response.json();
-			setProjects(Array.isArray(data) ? data : data.data || []);
+			const activeData = await activeResponse.json();
+			setProjects(Array.isArray(activeData) ? activeData : activeData.data || []);
+
+			// Fetch pending projects
+			const pendingResponse = await fetch(`/api/projects?charityId=${charityId}&status=pending`);
+			if (!pendingResponse.ok) {
+				throw new Error('Failed to fetch pending projects');
+			}
+			const pendingData = await pendingResponse.json();
+			setPendingProjects(Array.isArray(pendingData) ? pendingData : pendingData.data || []);
 		} catch (err) {
 			setError(err.message);
 			setProjects([]);
+			setPendingProjects([]);
 		} finally {
 			setLoading(false);
 		}
@@ -60,6 +72,8 @@ const CharityAdminDashboard = () => {
 				<CharityAdminDashboardNavBar
 					onWalletConnected={handleWalletConnected}
 					onProjectCreated={handleProjectCreated}
+					activeTab={activeTab}
+					onTabChange={setActiveTab}
 				/>
 				<main className='flex-1 overflow-auto p-8'>
 					<div className='grid grid-cols-3 gap-8 max-w-[1800px] mx-auto'>
@@ -69,12 +83,22 @@ const CharityAdminDashboard = () => {
 							</div>
 						) : error ? (
 							<div className="text-red-500 text-center w-full col-span-3">{error}</div>
-						) : !projects || projects.length === 0 ? (
-							<div className="text-gray-400 text-center w-full col-span-3">No projects found</div>
+						) : activeTab === 'projects' ? (
+							projects.length === 0 ? (
+								<div className="text-gray-400 text-center w-full col-span-3">No active projects found</div>
+							) : (
+								projects.map((project) => (
+									<CardCharityAdminDashboard key={project.id} project={project} />
+								))
+							)
 						) : (
-							projects.map((project) => (
-								<CardCharityAdminDashboard key={project.id} project={project} />
-							))
+							pendingProjects.length === 0 ? (
+								<div className="text-gray-400 text-center w-full col-span-3">No pending projects found</div>
+							) : (
+								pendingProjects.map((project) => (
+									<CardCharityAdminDashboard key={project.id} project={project} isPending={true} />
+								))
+							)
 						)}
 					</div>
 				</main>
