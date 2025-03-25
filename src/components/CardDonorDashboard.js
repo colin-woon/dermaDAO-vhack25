@@ -3,9 +3,43 @@ import { connectWallet, donate, getCurrentRoundId } from '@/services/blockchain'
 
 const CardDonorDashboard = ({ project }) => {
 	const [showDonateModal, setShowDonateModal] = useState(false);
+	const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
 	const [donationAmount, setDonationAmount] = useState('');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+
+	// Mock transaction history data
+	const mockTransactionHistory = [
+		{
+			id: 1,
+			date: '2024-03-25',
+			recipient: '0x1234...5678',
+			amount: '5 DMC',
+			status: 'Completed',
+			description: 'Initial distribution'
+		},
+		{
+			id: 2,
+			date: '2024-03-26',
+			recipient: '0x8765...4321',
+			amount: '3 DMC',
+			status: 'Pending',
+			description: 'Equipment purchase'
+		}
+	];
+
+	const renderStatusBadge = (status) => {
+		const statusColors = {
+			'Completed': 'bg-green-500/20 text-green-400',
+			'Pending': 'bg-yellow-500/20 text-yellow-400',
+			'Failed': 'bg-red-500/20 text-red-400'
+		};
+		return (
+			<span className={`px-2 py-1 rounded-full text-xs ${statusColors[status] || 'bg-gray-500/20 text-gray-400'}`}>
+				{status}
+			</span>
+		);
+	};
 
 	const handleDonate = async (e) => {
 		e.preventDefault();
@@ -81,6 +115,7 @@ const CardDonorDashboard = ({ project }) => {
 				<div className="card-actions flex justify-between items-center w-full gap-1">
 					<button
 						className="btn btn-accent btn-sm w-[32%] text-xs"
+						onClick={() => setIsTransactionHistoryModalOpen(true)}
 					>
 						Transactions
 					</button>
@@ -96,6 +131,48 @@ const CardDonorDashboard = ({ project }) => {
 						Donate
 					</button>
 				</div>
+
+				{/* Transaction History Dialog */}
+				<dialog className={`modal ${isTransactionHistoryModalOpen ? 'modal-open' : ''}`}>
+					<div className="modal-box bg-violet-950/90 max-w-4xl">
+						<h3 className="font-bold text-lg mb-4">Transaction History</h3>
+						<div className="overflow-x-auto">
+							<table className="table w-full">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Recipient</th>
+										<th>Amount</th>
+										<th>Description</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									{mockTransactionHistory.map((tx) => (
+										<tr key={tx.id}>
+											<td>{tx.date}</td>
+											<td className="font-mono text-sm">{tx.recipient}</td>
+											<td>{tx.amount}</td>
+											<td>{tx.description}</td>
+											<td>{renderStatusBadge(tx.status)}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						<div className="modal-action">
+							<button
+								className="btn"
+								onClick={() => setIsTransactionHistoryModalOpen(false)}
+							>
+								Close
+							</button>
+						</div>
+					</div>
+					<form method="dialog" className="modal-backdrop">
+						<button onClick={() => setIsTransactionHistoryModalOpen(false)}>close</button>
+					</form>
+				</dialog>
 
 				{/* Donate Modal */}
 				<dialog className={`modal ${showDonateModal ? 'modal-open' : ''}`}>

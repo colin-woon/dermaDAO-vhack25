@@ -2,13 +2,44 @@ import { useState, useRef } from 'react';
 
 const CardCharityAdminDashboard = ({ project }) => {
 	const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+	const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+	const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
 	const [score, setScore] = useState(null);
 	const [explanation, setExplanation] = useState('');
 	const [loading, setLoading] = useState(false);
+	const [transactionData, setTransactionData] = useState({
+		recipientAddress: '',
+		amount: '',
+		description: ''
+	});
 	const fileInputRef = useRef(null);
 
+	// Mock data for demonstration
+	const mockDistributedFunds = project.id === 'projectA' ? 10 : 10; // 10 DMC for Project A, 10 DMC for Project B
+	const mockThresholdScore = 80;
+
+	// Mock transaction history data
+	const mockTransactionHistory = [
+		{
+			id: 1,
+			date: '2024-03-25',
+			recipient: '0x1234...5678',
+			amount: '5 DMC',
+			status: 'Completed',
+			description: 'Initial distribution'
+		},
+		{
+			id: 2,
+			date: '2024-03-26',
+			recipient: '0x8765...4321',
+			amount: '3 DMC',
+			status: 'Pending',
+			description: 'Equipment purchase'
+		}
+	];
+
 	const renderScoreIcon = (score) => {
-		if (score >= 80) {
+		if (score >= mockThresholdScore) {
 			return <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
 				<path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
 			</svg>;
@@ -27,29 +58,37 @@ const CardCharityAdminDashboard = ({ project }) => {
 		formData.append('pdf', file);
 
 		try {
-			const uploadResponse = await fetch('/api/upload-proposal', {
-				method: 'POST',
-				body: formData,
-			});
-			const { text } = await uploadResponse.json();
-
-			const analyzeResponse = await fetch('/api/analyze-proposal', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ text }),
-			});
-
-			const { score, explanation } = await analyzeResponse.json();
-			setScore(score);
-			setExplanation(explanation);
+			// Mock API call for demonstration
+			await new Promise(resolve => setTimeout(resolve, 1500));
+			const mockScore = 85; // Mock score above threshold
+			setScore(mockScore);
+			setExplanation('The transaction request has been approved. The proposal demonstrates clear purpose and proper fund allocation.');
 			setIsResultModalOpen(true);
 		} catch (error) {
 			console.error('Error processing proposal:', error);
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const handleTransactionSubmit = (e) => {
+		e.preventDefault();
+		// Mock transaction submission
+		console.log('Transaction submitted:', transactionData);
+		setIsTransactionModalOpen(false);
+	};
+
+	const renderStatusBadge = (status) => {
+		const statusColors = {
+			'Completed': 'bg-green-500/20 text-green-400',
+			'Pending': 'bg-yellow-500/20 text-yellow-400',
+			'Failed': 'bg-red-500/20 text-red-400'
+		};
+		return (
+			<span className={`px-2 py-1 rounded-full text-xs ${statusColors[status] || 'bg-gray-500/20 text-gray-400'}`}>
+				{status}
+			</span>
+		);
 	};
 
 	return (
@@ -62,25 +101,19 @@ const CardCharityAdminDashboard = ({ project }) => {
 			<div className="card-body">
 				<h2 className="card-title">{project.name}</h2>
 				<p>Goal Amount: {project.goal_amount} DMC</p>
-				<p>Distributed Funds: {project.allocated_funds || 0} DMC</p>
+				<p className="text-green-400">Distributed Funds: {mockDistributedFunds} DMC</p>
 				<p>Description: {project.description}</p>
 				<div className="card-actions flex justify-between items-center w-full gap-1">
-					<input
-						type="file"
-						ref={fileInputRef}
-						className="hidden"
-						accept=".pdf"
-						onChange={handleFileUpload}
-					/>
 					<button
 						className="btn btn-accent btn-sm w-[32%] text-xs"
+						onClick={() => setIsTransactionHistoryModalOpen(true)}
 					>
-					Transactions
+						Transactions
 					</button>
 					<button
 						className="btn btn-secondary btn-sm w-[32%] text-xs"
 					>
-					Status
+						Status
 					</button>
 					<button
 						className="btn btn-primary btn-sm w-[32%] text-xs"
@@ -109,9 +142,14 @@ const CardCharityAdminDashboard = ({ project }) => {
 						<div className="modal-action">
 							<button
 								className="btn btn-primary"
-								onClick={() => setIsResultModalOpen(false)}
+								onClick={() => {
+									setIsResultModalOpen(false);
+									if (score >= mockThresholdScore) {
+										setIsTransactionModalOpen(true);
+									}
+								}}
 							>
-								Close
+								{score >= mockThresholdScore ? 'Proceed to Transaction' : 'Close'}
 							</button>
 						</div>
 					</div>
@@ -119,6 +157,111 @@ const CardCharityAdminDashboard = ({ project }) => {
 						<button onClick={() => setIsResultModalOpen(false)}>close</button>
 					</form>
 				</dialog>
+
+				{/* Transaction History Dialog */}
+				<dialog className={`modal ${isTransactionHistoryModalOpen ? 'modal-open' : ''}`}>
+					<div className="modal-box bg-violet-950/90 max-w-4xl">
+						<h3 className="font-bold text-lg mb-4">Transaction History</h3>
+						<div className="overflow-x-auto">
+							<table className="table w-full">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Recipient</th>
+										<th>Amount</th>
+										<th>Description</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									{mockTransactionHistory.map((tx) => (
+										<tr key={tx.id}>
+											<td>{tx.date}</td>
+											<td className="font-mono text-sm">{tx.recipient}</td>
+											<td>{tx.amount}</td>
+											<td>{tx.description}</td>
+											<td>{renderStatusBadge(tx.status)}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						<div className="modal-action">
+							<button
+								className="btn"
+								onClick={() => setIsTransactionHistoryModalOpen(false)}
+							>
+								Close
+							</button>
+						</div>
+					</div>
+					<form method="dialog" className="modal-backdrop">
+						<button onClick={() => setIsTransactionHistoryModalOpen(false)}>close</button>
+					</form>
+				</dialog>
+
+				{/* Transaction Request Dialog */}
+				<dialog className={`modal ${isTransactionModalOpen ? 'modal-open' : ''}`}>
+					<div className="modal-box bg-purple-950/90">
+						<h2 className="text-2xl font-semibold mb-8">Transaction Request</h2>
+						<form onSubmit={handleTransactionSubmit} className="space-y-6">
+							<div className="form-control">
+								<label className="text-gray-300 text-lg mb-2">
+									Recipient Address
+								</label>
+								<input
+									type="text"
+									className="input input-bordered bg-purple-900/50 w-full h-12 text-white placeholder-gray-400"
+									value={transactionData.recipientAddress}
+									onChange={(e) => setTransactionData({...transactionData, recipientAddress: e.target.value})}
+									placeholder="0x..."
+								/>
+							</div>
+							<div className="form-control">
+								<label className="text-gray-300 text-lg mb-2">
+									Amount (DMC)
+								</label>
+								<input
+									type="number"
+									className="input input-bordered bg-purple-900/50 w-full h-12 text-white placeholder-gray-400"
+									value={transactionData.amount}
+									onChange={(e) => setTransactionData({...transactionData, amount: e.target.value})}
+									placeholder="Enter amount"
+								/>
+							</div>
+							<div className="form-control">
+								<label className="text-gray-300 text-lg mb-2">
+									Description
+								</label>
+								<textarea
+									className="textarea textarea-bordered bg-purple-900/50 w-full min-h-[100px] text-white placeholder-gray-400 resize-none"
+									value={transactionData.description}
+									onChange={(e) => setTransactionData({...transactionData, description: e.target.value})}
+									placeholder="Describe the purpose of this transaction"
+								/>
+							</div>
+							<div className="modal-action flex justify-end gap-3 mt-8">
+								<button type="button" className="btn btn-ghost hover:bg-purple-800" onClick={() => setIsTransactionModalOpen(false)}>
+									Cancel
+								</button>
+								<button type="submit" className="btn bg-indigo-600 hover:bg-indigo-700 text-white border-0">
+									Submit Request
+								</button>
+							</div>
+						</form>
+					</div>
+					<form method="dialog" className="modal-backdrop">
+						<button onClick={() => setIsTransactionModalOpen(false)}>close</button>
+					</form>
+				</dialog>
+
+				<input
+					type="file"
+					ref={fileInputRef}
+					className="hidden"
+					accept=".pdf"
+					onChange={handleFileUpload}
+				/>
 			</div>
 		</div>
 	);
