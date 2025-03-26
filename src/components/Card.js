@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Table from './Table';
 
-const Card = ({ onClick, isSelected, cardId, mockTableData }) => {
+const Card = ({ onClick, isSelected, cardId, mockTableData, project }) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
     const [donationAmount, setDonationAmount] = useState('');
     const [isTableModalOpen, setIsTableModalOpen] = useState(false);
@@ -22,12 +22,26 @@ const Card = ({ onClick, isSelected, cardId, mockTableData }) => {
         setIsTableModalOpen(true);
     };
 
+    // Get mock image URL based on project ID or use default
+    const getMockImageUrl = (projectId) => {
+        const mockImages = [
+            "/pictures/1.jpg", // Default
+            "/pictures/1.jpg", // Project 1
+            "/pictures/2.jpg", // Project 2
+            "/pictures/3.jpg", // Project 3
+            "/pictures/4.jpg", // Project 4
+        ];
+        return mockImages[projectId % mockImages.length] || mockImages[0];
+    };
+
+    const imageUrl = project?.id ? getMockImageUrl(project.id) : "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp";
+
 	return (
 		<div className={`card bg-purple-950/90 w-1/4 rounded-3xl`}  onClick={onClick}>
 			<figure>
 				<img
-					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-					alt="Shoes" />
+					src={imageUrl}
+					alt={project?.name || "Project"} />
 			</figure>
 			<div class="card-body">
 				<h2 class="card-title">Project Name</h2>

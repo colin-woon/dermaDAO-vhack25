@@ -25,6 +25,7 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated, acti
 		name: '',
 		description: '',
 		goalAmount: '',
+		image_url: '',
 		proposal: {
 			impact: '',
 			methodology: '',
@@ -234,6 +235,7 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated, acti
 					projectName: projectData.name,
 					description: projectData.description,
 					goalAmount: projectData.goalAmount,
+					image_url: projectData.image_url,
 					proposal: projectData.proposal,
 					aiScore: score
 				})
@@ -249,6 +251,7 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated, acti
 				name: '',
 				description: '',
 				goalAmount: '',
+				image_url: '',
 				proposal: {
 					impact: '',
 					methodology: '',
@@ -415,6 +418,18 @@ const CharityAdminDashboardNavBar = ({ onWalletConnected, onProjectCreated, acti
 										onChange={(e) => setProjectData({...projectData, name: e.target.value})}
 										placeholder="Enter project name"
 									/>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium text-gray-300">Image URL</label>
+									<input
+										type="url"
+										className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-violet-500 focus:ring-violet-500"
+										value={projectData.image_url}
+										onChange={(e) => setProjectData({...projectData, image_url: e.target.value})}
+										placeholder="https://example.com/image.jpg"
+									/>
+									<p className="mt-1 text-sm text-gray-400">URL of the project image (optional)</p>
 								</div>
 
 								<div>

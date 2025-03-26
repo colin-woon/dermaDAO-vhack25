@@ -16,6 +16,18 @@ const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 	});
 	const fileInputRef = useRef(null);
 
+    // Get mock image URL based on project ID or use default
+    const getMockImageUrl = (projectId) => {
+        const mockImages = [
+            "/pictures/1.jpg", // Default
+            "/pictures/1.jpg", // Project 1
+            "/pictures/2.jpg", // Project 2
+            "/pictures/3.jpg", // Project 3
+            "/pictures/4.jpg", // Project 4
+        ];
+        return mockImages[projectId % mockImages.length] || mockImages[0];
+    };
+
 	// Mock data for demonstration
 	const mockDistributedFunds = project.id === 'projectA' ? 10 : 10; // 10 DMC for Project A, 10 DMC for Project B
 	const mockThresholdScore = 80;
@@ -146,8 +158,8 @@ const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 		<div className="card bg-purple-950/90 w-full h-[500px] shadow-lg rounded-3xl">
 			<figure className="h-64">
 				<img
-					src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
-					alt="Project"
+					src={project?.id ? getMockImageUrl(project.id) : "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"}
+					alt={project.name || "Project"}
 					className="w-full h-full object-cover"
 				/>
 			</figure>
