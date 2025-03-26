@@ -12,6 +12,26 @@ const CharityAdminDashboard = () => {
 	const [charityId, setCharityId] = useState(null);
 	const [activeTab, setActiveTab] = useState('projects');
 
+	// Mock pending project data
+	const mockPendingProject = {
+		id: 'pending-1',
+		name: 'Dermatology Research Initiative',
+		description: 'A groundbreaking research project focusing on innovative treatments for chronic skin conditions.',
+		goal_amount: 50.00,
+		allocated_funds: 0,
+		image_url: 'https://example.com/project-image.jpg',
+		proposal: {
+			impact: 'This research aims to develop new treatments that could benefit millions of patients worldwide.',
+			methodology: 'Using cutting-edge technology and clinical trials to validate new treatment approaches.',
+			sustainability: 'Results will be published open-source and methodology will be shared with other institutions.',
+			budget_breakdown: 'Research equipment: 60%, Clinical trials: 30%, Documentation: 10%',
+			timeline: '12-month project with quarterly milestones and regular progress reports.',
+			ai_score: 85,
+			donor_scores: [4.2, 4.5]
+		},
+		status: 'pending'
+	};
+
 	const fetchProjects = async () => {
 		if (!charityId) return;
 
@@ -26,13 +46,9 @@ const CharityAdminDashboard = () => {
 			const activeData = await activeResponse.json();
 			setProjects(Array.isArray(activeData) ? activeData : activeData.data || []);
 
-			// Fetch pending projects
-			const pendingResponse = await fetch(`/api/projects?charityId=${charityId}&status=pending`);
-			if (!pendingResponse.ok) {
-				throw new Error('Failed to fetch pending projects');
-			}
-			const pendingData = await pendingResponse.json();
-			setPendingProjects(Array.isArray(pendingData) ? pendingData : pendingData.data || []);
+			// For now, use mock pending project
+			setPendingProjects([mockPendingProject]);
+
 		} catch (err) {
 			setError(err.message);
 			setProjects([]);
@@ -45,6 +61,9 @@ const CharityAdminDashboard = () => {
 	useEffect(() => {
 		if (charityId) {
 			fetchProjects();
+		} else {
+			// For demonstration, show mock pending project even without charity ID
+			setPendingProjects([mockPendingProject]);
 		}
 	}, [charityId]);
 

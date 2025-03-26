@@ -6,6 +6,7 @@ const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 	const [isTransactionHistoryModalOpen, setIsTransactionHistoryModalOpen] = useState(false);
 	const [showClaimModal, setShowClaimModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
+	const [showDetailsModal, setShowDetailsModal] = useState(false);
 	const [score, setScore] = useState(null);
 	const [explanation, setExplanation] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -108,18 +109,12 @@ const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 	const renderActionButtons = () => {
 		if (isPending) {
 			return (
-				<div className="card-actions flex justify-between items-center w-full gap-1 mt-4">
+				<div className="card-actions flex justify-center w-full mt-4">
 					<button
-						className="btn btn-accent btn-sm w-[48%]"
-						onClick={() => setIsTransactionHistoryModalOpen(true)}
+						className="btn btn-accent btn-sm w-full"
+						onClick={() => setShowDetailsModal(true)}
 					>
 						View Details
-					</button>
-					<button
-						className="btn btn-primary btn-sm w-[48%]"
-						onClick={() => setShowEditModal(true)}
-					>
-						Edit Proposal
 					</button>
 				</div>
 			);
@@ -167,7 +162,7 @@ const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 				<div className="flex justify-between items-start">
 					<h2 className="card-title text-2xl">{project.name}</h2>
 					{isPending && (
-						<span className="badge badge-warning">Pending Approval</span>
+						<span className="badge badge-warning text-xs text-center font-bold px-3 py-4">Pending Approval</span>
 					)}
 				</div>
 				<div className="space-y-2 flex-grow">
@@ -179,6 +174,89 @@ const CardCharityAdminDashboard = ({ project, isPending = false }) => {
 				</div>
 				{renderActionButtons()}
 			</div>
+
+			{/* Details Modal for Pending Projects */}
+			{showDetailsModal && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+					<div className="bg-gray-950 p-6 rounded-lg w-full max-w-2xl max-h-[90vh] flex flex-col">
+						<h2 className="text-2xl font-bold mb-6 sticky top-0 bg-gray-950 py-2 z-10 border-b border-gray-800">Project Details</h2>
+						<div className="overflow-y-auto flex-1 pr-2">
+							<div className="space-y-6">
+								{/* Basic Project Info */}
+								<div className="space-y-4">
+									<div>
+										<h3 className="text-lg font-semibold text-violet-400">Project Information</h3>
+										<p className="text-gray-300 mt-2"><span className="font-medium">Name:</span> {project.name}</p>
+										<p className="text-gray-300 mt-2"><span className="font-medium">Description:</span> {project.description}</p>
+										<p className="text-gray-300 mt-2"><span className="font-medium">Goal Amount:</span> {project.goal_amount} DMC</p>
+									</div>
+								</div>
+
+								{/* Proposal Details */}
+								<div className="space-y-4">
+									<h3 className="text-lg font-semibold text-violet-400">Proposal Details</h3>
+
+									<div>
+										<h4 className="font-medium text-gray-200">Impact & Significance</h4>
+										<p className="text-gray-300 mt-1">{project.proposal.impact}</p>
+									</div>
+
+									<div>
+										<h4 className="font-medium text-gray-200">Methodology & Approach</h4>
+										<p className="text-gray-300 mt-1">{project.proposal.methodology}</p>
+									</div>
+
+									<div>
+										<h4 className="font-medium text-gray-200">Sustainability & Long-term Impact</h4>
+										<p className="text-gray-300 mt-1">{project.proposal.sustainability}</p>
+									</div>
+
+									<div>
+										<h4 className="font-medium text-gray-200">Budget Breakdown</h4>
+										<p className="text-gray-300 mt-1">{project.proposal.budget_breakdown}</p>
+									</div>
+
+									<div>
+										<h4 className="font-medium text-gray-200">Timeline & Milestones</h4>
+										<p className="text-gray-300 mt-1">{project.proposal.timeline}</p>
+									</div>
+								</div>
+
+								{/* AI and Donor Scores */}
+								<div className="space-y-4">
+									<h3 className="text-lg font-semibold text-violet-400">Evaluation Scores</h3>
+									<div className="bg-purple-900/50 p-4 rounded-lg">
+										<p className="text-gray-200">
+											<span className="font-medium">AI Score:</span>{' '}
+											<span className={project.proposal.ai_score >= 80 ? 'text-green-400' : 'text-yellow-400'}>
+												{project.proposal.ai_score}/100
+											</span>
+										</p>
+										{project.proposal.donor_scores && project.proposal.donor_scores.length > 0 && (
+											<p className="text-gray-200 mt-2">
+												<span className="font-medium">Donor Scores:</span>{' '}
+												{project.proposal.donor_scores.map((score, index) => (
+													<span key={index} className="text-violet-400">
+														{score}/5{index < project.proposal.donor_scores.length - 1 ? ', ' : ''}
+													</span>
+												))}
+											</p>
+										)}
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="flex justify-end mt-6 pt-4 border-t border-gray-800">
+							<button
+								className="btn btn-primary"
+								onClick={() => setShowDetailsModal(false)}
+							>
+								Close
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* Results Dialog */}
 			<dialog className={`modal ${isResultModalOpen ? 'modal-open' : ''}`}>
